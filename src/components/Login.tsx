@@ -16,7 +16,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate(`/${user.role}`, { replace: true })
+      navigate(user.role === 'admin' ? '/admin' : '/student', { replace: true })
     }
   }, [navigate, user])
 
@@ -32,7 +32,7 @@ export default function Login() {
     setLoading(true)
     try {
       await login(email, password, role)
-      navigate(`/${role}`)
+      navigate(role === 'admin' ? '/admin' : '/student')
     } catch (err) {
       setError('Login failed. Try again.')
     } finally {

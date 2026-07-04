@@ -31,10 +31,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const login = async (email: string, _password: string, role: UserRole) => {
-    // TODO: replace with real .NET API call when backend is ready.
+  const login = async (email: string, password: string, role: UserRole) => {
     await new Promise((resolve) => setTimeout(resolve, 250))
-    const authUser: User = { email, role }
+
+    const normalizedEmail = email.trim().toLowerCase()
+    const demoAccounts: Record<string, { password: string; role: UserRole }> = {
+      'admin@example.com': { password: 'admin123', role: 'admin' },
+      'student@example.com': { password: 'student123', role: 'user' },
+    }
+
+    const account = demoAccounts[normalizedEmail]
+
+    if (!account || account.password !== password || account.role !== role) {
+      throw new Error('Invalid credentials')
+    }
+
+    const authUser: User = { email: normalizedEmail, role }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser))
     setUser(authUser)
   }
