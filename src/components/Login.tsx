@@ -27,7 +27,7 @@ export default function Login({ initialMode = 'signin' }: LoginProps) {
 
   useEffect(() => {
     if (user) {
-      navigate(`/${user.role}`, { replace: true })
+      navigate(user.role === 'admin' ? '/admin' : '/student', { replace: true })
     }
   }, [navigate, user])
 
@@ -89,7 +89,7 @@ export default function Login({ initialMode = 'signin' }: LoginProps) {
         await login(email.trim(), password, role)
       }
 
-      navigate(`/${role}`)
+      navigate(role === 'admin' ? '/admin' : '/student')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed. Try again.')
     } finally {

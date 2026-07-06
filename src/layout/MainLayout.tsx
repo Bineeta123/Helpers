@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { FiSearch } from 'react-icons/fi'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import Sidebar from '../components/Sidebar/sidebar'
@@ -21,7 +21,11 @@ const TOPBAR_ROUTES: Record<TopbarId, string> = {
   reports: '/analytics',
 }
 
-export default function MainLayout() {
+type MainLayoutProps = {
+  children?: ReactNode
+}
+
+export default function MainLayout({ children }: MainLayoutProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const [activeTopbar, setActiveTopbar] = useState<TopbarId>('overview')
@@ -97,7 +101,7 @@ export default function MainLayout() {
           </header>
 
           <main className="dashboard-content">
-            <Outlet />
+            {children ?? <Outlet />}
           </main>
         </div>
       </div>
