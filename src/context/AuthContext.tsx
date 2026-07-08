@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-export type UserRole = 'admin' | 'user'
+export type UserRole = 'admin' | 'student'
 export type User = {
   email: string
   role: UserRole
@@ -14,8 +14,8 @@ type StoredAccount = User & {
 
 type AuthContextType = {
   user: User | null
-  login: (email: string, password: string, role: UserRole) => Promise<void>
-  signup: (name: string, email: string, password: string, role: UserRole) => Promise<void>
+  login: (email: string, password: string) => Promise<void>
+  signup: (email: string, password: string, role: UserRole) => Promise<void>
   logout: () => void
 }
 
@@ -54,19 +54,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   })
 
-  const login = async (email: string, password: string, role: UserRole) => {
+  const login = async (email: string, password: string) => {
     // TODO: replace with real .NET API call when backend is ready.
     await new Promise((resolve) => setTimeout(resolve, 250))
     const accounts = getStoredAccounts()
     const account = accounts.find(
       (storedAccount) =>
         storedAccount.email.toLowerCase() === email.toLowerCase() &&
-        storedAccount.password === password &&
-        storedAccount.role === role,
+        storedAccount.password === password,
     )
 
     if (!account) {
-      throw new Error('Invalid email, password, or role.')
+      throw new Error('Invalid email or password.')
     }
 
     const authUser: User = { email: account.email, role: account.role, name: account.name }
@@ -74,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(authUser)
   }
 
-  const signup = async (name: string, email: string, password: string, role: UserRole) => {
+  const signup = async (email: string, password: string, role: UserRole) => {
     // TODO: replace with real .NET API call when backend is ready.
     await new Promise((resolve) => setTimeout(resolve, 250))
     const accounts = getStoredAccounts()
@@ -86,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('An account already exists with this email.')
     }
 
-    const authUser: User = { name, email, role }
+    const authUser: User = { email, role }
     saveStoredAccounts([...accounts, { ...authUser, password }])
     localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser))
     setUser(authUser)
