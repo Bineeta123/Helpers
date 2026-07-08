@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace StudyPlannerApi.Controllers
+namespace SmartStudyPlanner.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,14 +29,37 @@ namespace StudyPlannerApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+            if (string.IsNullOrWhiteSpace(request.Email) ||
+                string.IsNullOrWhiteSpace(request.Password) ||
+                string.IsNullOrWhiteSpace(request.ConfirmPassword))
             {
-                return BadRequest("Email and password are required.");
+                return BadRequest("Email, password and confirm password are required.");
             }
 
-            if (string.IsNullOrWhiteSpace(request.Role))
+            if (request.Password != request.ConfirmPassword)
             {
-                return BadRequest("Role is required.");
+                return BadRequest("Password and confirm password do not match.");
+            }
+
+            if (!IsValidRole(request.Role))
+            {
+                return BadRequest("Role must be Student or Admin.");
+            }
+
+            if (!IsValidEmailForRole(request.Email, request.Role))
+            {
+                if (request.Role == "Student")
+                {
+                    return BadRequest("Student email must contain ncit.edu.np");
+                }
+
+                return BadRequest("Admin email must contain hod and ncit.edu.np");
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                return BadRequest("A user with this email already exists.");
             }
 
             var user = new IdentityUser
@@ -52,15 +75,23 @@ namespace StudyPlannerApi.Controllers
                 return BadRequest(result.Errors);
             }
 
-            var normalizedRole = request.Role.ToLower() == "admin" ? "Admin" : "Student";
-            await _userManager.AddToRoleAsync(user, normalizedRole);
+            await _userManager.AddToRoleAsync(user, request.Role);
 
-            return Ok(new { message = "User registered successfully." });
+            return Ok(new
+            {
+                message = "User registered successfully.",
+                role = request.Role
+            });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest("Email and password are required.");
+            }
+
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
@@ -110,6 +141,29 @@ namespace StudyPlannerApi.Controllers
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private static bool IsValidRole(string role)
+        {
+            return role.Equals("Student", StringComparison.OrdinalIgnoreCase) ||
+                   role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsValidEmailForRole(string email, string role)
+        {
+            var lowerEmail = email.ToLowerInvariant();
+
+            if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            {
+                return lowerEmail.Contains("ncit.edu.np");
+            }
+
+            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                return lowerEmail.Contains("hod") && lowerEmail.Contains("ncit.edu.np");
+            }
+
+            return false;
         }
     }
 }
