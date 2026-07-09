@@ -73,3 +73,9 @@
 .logout-button:hover {
   background: #29443a;
 }
+
+.admin-menu-item.active {
+    background: #0f766e;
+    color: white;
+    text-decoration: none;
+}
