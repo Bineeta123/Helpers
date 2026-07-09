@@ -1,6 +1,7 @@
 import "./AdminDashboard.css";
 import AdminSidebar from "../../components/AdminSidebar/AdminSidebar";
 import { useAuth } from "../../../context/AuthContext";
+import SummaryCard from "../../components/SummaryCard/SummaryCard";
 
 
 
@@ -27,7 +28,7 @@ const { user } = useAuth()
           <p>Manage students, assignments and resources from one place.</p>
         </div>
 
-        <div className="summary-cards">
+        {/* <div className="summary-cards">
           <div className="summary-card">
             <h3>Total Students</h3>
             <h2>128</h2>
@@ -47,7 +48,13 @@ const { user } = useAuth()
             <h3>Completed</h3>
             <h2>106</h2>
           </div>
-        </div>
+        </div> */}
+        <div className="summary-cards">
+  <SummaryCard title="Total Students" value={128} />
+  <SummaryCard title="Assignments" value={24} />
+  <SummaryCard title="Pending" value={18} />
+  <SummaryCard title="Completed" value={106} />
+</div>
       </main>
     </div>
   );
