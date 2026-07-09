@@ -13,7 +13,6 @@ import StudentSignup from './components/StudentSignup'
 import AdminSignup from './components/AdminSignup'
 import SignIn from './components/SignIn'
 import AdminDashboard from './components/AdminDashboard'
-import UserDashboard from './components/UserDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -24,7 +23,7 @@ function HomeRedirect() {
     return <Navigate to="/role-selector" replace />
   }
 
-  return <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace />
+  return <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />
 }
 
 function App() {
@@ -39,7 +38,7 @@ function App() {
         path="/student"
         element={
           <ProtectedRoute role="student">
-            <UserDashboard />
+            <Navigate to="/dashboard" replace />
           </ProtectedRoute>
         }
       />

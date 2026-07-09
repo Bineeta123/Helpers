@@ -1,5 +1,6 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import './sidebar.css'
 import {
   FiHome,
@@ -23,20 +24,27 @@ const MAIN_ITEMS = [
 ]
 
 export default function Sidebar(): React.ReactElement {
+  const { user, logout } = useAuth()
+
   const navigate = useNavigate()
 
   const handleNewTask = () => {
     navigate('/new-task')
   }
 
-  const handleHelpSupport = () => {
-    window.open('mailto:support@studyplanner.app')
+  const handleLogout = () => {
+   logout()
+    navigate('/login')
   }
 
-  const handleLogout = () => {
-    window.alert('You have been logged out.')
-    navigate('/dashboard')
-  }
+  // const handleHelpSupport = () => {
+  //   window.open('mailto:support@studyplanner.app')
+  // }
+
+  // const handleLogout = () => {
+  //   // window.alert('You have been logged out.')
+  //   navigate('/login')
+  // }
 
   return (
     <aside className="sidebar" aria-label="Application sidebar">
@@ -72,15 +80,11 @@ export default function Sidebar(): React.ReactElement {
         </nav>
       </div>
 
-      <div className="sidebar-footer">
-        <button type="button" className="sidebar-footer-button" onClick={handleHelpSupport}>
-          <FiHelpCircle />
-          <span>Help Support</span>
-        </button>
+      <div className="sidebar-footer">      
         <button type="button" className="sidebar-footer-button" onClick={handleLogout}>
           <FiLogOut />
           <span>Logout</span>
-        </button>
+        </button>   
       </div>
     </aside>
   )

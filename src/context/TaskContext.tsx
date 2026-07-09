@@ -19,14 +19,14 @@ const TaskContext = createContext<TaskContextValue | undefined>(undefined)
 const initialTasks: Task[] = [
   {
     id: 'task-1',
-    title: 'Physics Problem Set',
+    title: 'Network programming Problem Set',
     status: 'Pending',
     due: 'Oct 26',
     note: 'Complete chapter 7 questions',
   },
   {
     id: 'task-2',
-    title: 'Chemistry Lab Report',
+    title: 'Agile Software Development Lab Report',
     status: 'Pending',
     due: 'Oct 28',
     note: 'Finish titration notes',
@@ -40,7 +40,7 @@ const initialTasks: Task[] = [
   },
   {
     id: 'task-4',
-    title: 'Biology Revision',
+    title: 'Cloud Application Development Revision',
     status: 'Pending',
     due: 'Nov 2',
     note: 'Go over cell structure',

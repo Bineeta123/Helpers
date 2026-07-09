@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import { useTasks } from '../../context/TaskContext'
 import '../../App.css'
 import './Dashboard.css'
@@ -6,6 +7,7 @@ import './Dashboard.css'
 export default function Dashboard() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth()
   const searchQuery = new URLSearchParams(location.search).get('search')?.trim() || ''
   const { tasks } = useTasks()
 
@@ -55,6 +57,12 @@ export default function Dashboard() {
   const focusDue = focusTask.due || 'No due date'
   const focusSubtitle = focusTask.note || `Due ${focusDue}`
   const hasSearchResults = searchQuery ? matchedTasks.length > 0 : true
+  const displayName = (() => {
+    const rawName = user?.name || user?.email || 'student'
+    const localPart = rawName.split('@')[0]
+    const firstSegment = localPart.split('.')[0] || localPart
+    return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
+  })()
 
   const formatDueLabel = (due: string) => {
     if (!due) return 'TBA'
@@ -66,7 +74,8 @@ export default function Dashboard() {
       <div className="dashboard-page-header">
         <div>
           <h1>Student Dashboard</h1>
-          <p>Welcome back, Neha. You have {totalDeadlines} deadlines today.</p>
+          <p>Hi, {displayName}.</p>
+          <p>You have {totalDeadlines} deadlines today.</p>
         </div>
       </div>
 
@@ -148,7 +157,7 @@ export default function Dashboard() {
           <div className="card-subtitle">2 sets pending</div>
           <div className="stats-grid">
             <div className="stat-box">
-              <div className="stat-label">Chemistry</div>
+              <div className="stat-label">Agile Software Development</div>
               <div className="stat-value">86%</div>
               <div className="stat-note">AVG SCORE</div>
             </div>
@@ -184,21 +193,21 @@ export default function Dashboard() {
         </div>
         <div className="activity-row">
           <span>Today, 9:30 AM</span>
-          <span>Physics II</span>
+          <span>Network programming</span>
           <span>Completed Quiz #3</span>
           <span className="status completed">Completed</span>
           <span>•••</span>
         </div>
         <div className="activity-row">
           <span>Yesterday</span>
-          <span>World Literature</span>
+          <span>Artificial Intelligence</span>
           <span>Read Chapter 5 Notes</span>
           <span className="status completed">Completed</span>
           <span>•••</span>
         </div>
         <div className="activity-row">
           <span>Yesterday</span>
-          <span>Applied Math</span>
+          <span>Applied Software Dependability</span>
           <span>Practice Session</span>
           <span className="status pending">Pending</span>
           <span>•••</span>

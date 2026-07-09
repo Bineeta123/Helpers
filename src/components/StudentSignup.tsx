@@ -18,7 +18,7 @@ export default function StudentSignup() {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/student', { replace: true })
+      navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
     }
   }, [navigate, user])
 
@@ -81,7 +81,7 @@ export default function StudentSignup() {
     setLoading(true)
     try {
       await signup(email.trim(), password, 'student')
-      navigate('/student')
+      navigate('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed. Try again.')
     } finally {
