@@ -12,12 +12,12 @@ export default function ResourceCenter() {
         <div className="card-title">Resource Center</div>
         <div className="resource-list">
           <div className="resource-row">
-            <span>Physics Formula Sheet</span>
-            <button type="button" className="btn-outline" onClick={() => handleOpenResource('Physics Formula Sheet')}>Open</button>
+            <span>Network programming Formula Sheet</span>
+            <button type="button" className="btn-outline" onClick={() => handleOpenResource('Network programming Formula Sheet')}>Open</button>
           </div>
           <div className="resource-row">
-            <span>Chemistry Lab Guide</span>
-            <button type="button" className="btn-outline" onClick={() => handleOpenResource('Chemistry Lab Guide')}>Open</button>
+            <span>Agile Software Development Lab Guide</span>
+            <button type="button" className="btn-outline" onClick={() => handleOpenResource('Agile Software Development Lab Guide')}>Open</button>
           </div>
           <div className="resource-row">
             <span>Operating Systems Notes</span>

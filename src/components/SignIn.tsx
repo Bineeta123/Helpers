@@ -13,7 +13,7 @@ export default function SignIn() {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/student', { replace: true })
+      navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
     }
   }, [navigate, user])
 

@@ -40,7 +40,7 @@ export default function NewTask() {
               type="text"
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              placeholder="e.g. Review chemistry notes"
+              placeholder="e.g. Review Agile Software Development notes"
             />
           </div>
 

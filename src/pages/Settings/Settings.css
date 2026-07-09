@@ -1,70 +1,30 @@
 .settings-page {
-  display: flex;
-  justify-content: center;
-  padding: 12px 0 24px;
-}
-
-.settings-form {
-  width: 100%;
-  max-width: 960px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  padding: 24px;
 }
 
 .settings-card {
-  padding: 32px;
-  border-radius: 28px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  max-width: 560px;
+}
+
+.settings-card h1 {
+  margin: 0 0 8px;
+  color: #173d2b;
 }
 
 .settings-field {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 18px;
+  gap: 8px;
+  margin-top: 16px;
 }
 
-.settings-field label {
-  color: #102a43;
+.settings-field input {
+  border: 1px solid #d7e4df;
+  border-radius: 10px;
+  padding: 10px 12px;
   font-size: 14px;
-  font-weight: 700;
-}
-
-.settings-field input,
-.settings-field select {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  color: #0f172a;
-  font-size: 14px;
-  outline: none;
-}
-
-.settings-field input:focus,
-.settings-field select:focus {
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-}
-
-.settings-checkbox-field {
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.settings-checkbox-field label {
-  margin: 0;
-}
-
-.settings-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.settings-saved {
-  color: #16a34a;
-  font-weight: 700;
 }
