@@ -5,7 +5,7 @@ import '../styles/Auth.css'
 
 const specialCharacterPattern = /[^A-Za-z0-9]/
 const numberPattern = /\d/
-const studentEmailPattern = /@ncit\.edu\.np$/
+const studentEmailPattern = /^[^@\s]+@ncit\.edu\.np$/i
 
 export default function StudentSignup() {
   const navigate = useNavigate()
@@ -39,11 +39,13 @@ export default function StudentSignup() {
   }
 
   const getEmailError = () => {
-    if (!email.trim()) {
+    const normalizedEmail = email.trim().toLowerCase()
+
+    if (!normalizedEmail) {
       return 'Email is required.'
     }
 
-    if (!studentEmailPattern.test(email.toLowerCase())) {
+    if (!studentEmailPattern.test(normalizedEmail)) {
       return 'Email must be in format: name@ncit.edu.np'
     }
 
