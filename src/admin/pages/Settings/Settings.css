@@ -1,0 +1,61 @@
+.settings-page{
+    padding:30px;
+    background:#f7f8fc;
+    min-height:100vh;
+}
+
+.settings-header{
+    margin-bottom:30px;
+}
+
+.settings-header h1{
+    margin:0;
+    color:#1f2937;
+}
+
+.settings-header p{
+    margin-top:5px;
+    color:#6b7280;
+}
+
+.settings-card{
+    width:500px;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.setting-item{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:20px;
+}
+
+.setting-item label{
+    margin-bottom:8px;
+    font-weight:600;
+    color:#374151;
+}
+
+.setting-item input{
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.save-btn{
+    margin-top:10px;
+    background:#0f766e;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.save-btn:hover{
+    background:#0d5f58;
+}
