@@ -12,9 +12,10 @@ import RoleSelector from './components/RoleSelector'
 import StudentSignup from './components/StudentSignup'
 import AdminSignup from './components/AdminSignup'
 import SignIn from './components/SignIn'
-import AdminDashboard from './components/AdminDashboard'
+// import AdminDashboard from './components/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
+import AdminApp from "./admin/AdminApp";
 
 function HomeRedirect() {
   const { user } = useAuth()
@@ -43,10 +44,10 @@ function App() {
         }
       />
       <Route
-        path="/admin"
+        path="/admin/*"
         element={
           <ProtectedRoute role="admin">
-            <AdminDashboard />
+            <AdminApp />
           </ProtectedRoute>
         }
       />
