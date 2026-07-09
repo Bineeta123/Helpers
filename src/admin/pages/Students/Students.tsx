@@ -1,4 +1,6 @@
 import './Students.css'
+import { useState } from "react";
+import StudentModal from "../../components/StudentModal/StudentModal";
 
 const students = [
   {
@@ -32,6 +34,8 @@ const students = [
 ]
 
 export default function Students() {
+    //before return add gareko
+    const [selectedStudent, setSelectedStudent] = useState<any>(null);
   return (
     <div className="students-page">
 
@@ -85,9 +89,16 @@ export default function Students() {
               </td>
 
               <td>
-                <button className="view-btn">
+                {/* <button className="view-btn">
                   View
-                </button>
+                </button> */}
+
+                <button
+  className="view-btn"
+  onClick={() => setSelectedStudent(student)}
+>
+  View
+</button>
 
                 <button className="delete-btn">
                   Delete
@@ -97,7 +108,12 @@ export default function Students() {
           ))}
         </tbody>
       </table>
-
+     {/* add before div close*/}
+         
+    <StudentModal
+  student={selectedStudent}
+  onClose={() => setSelectedStudent(null)}
+/>
     </div>
   )
 }
