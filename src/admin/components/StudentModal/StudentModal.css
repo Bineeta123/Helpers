@@ -1,0 +1,35 @@
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.4);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.student-modal{
+    width:420px;
+    background:white;
+    border-radius:12px;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.student-modal h2{
+    margin-top:0;
+    color:#0f766e;
+}
+
+.student-modal p{
+    margin:14px 0;
+}
+
+.close-btn{
+    margin-top:20px;
+    background:#0f766e;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+}
