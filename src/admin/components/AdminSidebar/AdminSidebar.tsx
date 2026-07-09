@@ -1,4 +1,6 @@
 import "./AdminSidebar.css";
+import { useAuth } from "../../../context/AuthContext";
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   FiHome,
   FiUsers,
@@ -37,6 +39,16 @@ const menuItems = [
 ];
 
 export default function AdminSidebar() {
+ const { user, logout } = useAuth()
+ const navigate = useNavigate()
+ 
+
+  const handleLogout = () => {
+   logout()
+    navigate('/login')
+  }
+ 
+
   return (
     <aside className="admin-sidebar">
       <div>
@@ -55,10 +67,10 @@ export default function AdminSidebar() {
         </nav>
       </div>
 
-      <button className="logout-button">
-        <FiLogOut />
-        <span>Logout</span>
-      </button>
+     <button type="button" className="sidebar-footer-button" onClick={handleLogout}>
+      <FiLogOut />
+      <span>Logout</span>
+     </button>   
     </aside>
   );
 }

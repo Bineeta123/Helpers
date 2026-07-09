@@ -4,7 +4,8 @@ import { useTasks } from '../../context/TaskContext'
 import '../../App.css'
 import './Dashboard.css'
 
-export default function Dashboard() {
+export default function Dashboard() 
+{
   const navigate = useNavigate()
   const location = useLocation()
   const { user } = useAuth()
