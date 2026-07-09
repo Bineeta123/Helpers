@@ -38,17 +38,21 @@
   align-items: center;
   gap: 14px;
   padding: 14px 18px;
-  border: none;
-  background: transparent;
+  text-decoration: none;
   border-radius: 12px;
-  cursor: pointer;
   color: #2f3d37;
   font-size: 15px;
+  font-weight: 500;
   transition: 0.2s;
 }
 
 .admin-menu-item:hover {
   background: #e7efea;
+}
+
+.admin-menu-item.active {
+  background: #355c4d;
+  color: #fff;
 }
 
 .logout-button {
