@@ -36,6 +36,14 @@ const students = [
 export default function Students() {
     //before return add gareko
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
+    //adding for dynamic search
+    const [searchTerm, setSearchTerm] = useState("");
+
+const filteredStudents = students.filter((student) =>
+  student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  student.semester.toLowerCase().includes(searchTerm.toLowerCase())
+);//upto here
   return (
     <div className="students-page">
 
@@ -54,6 +62,9 @@ export default function Students() {
         <input
           type="text"
           placeholder="Search students..."
+          //adding for dynamic search
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -70,7 +81,7 @@ export default function Students() {
         </thead>
 
         <tbody>
-          {students.map(student => (
+          {filteredStudents.map(student => (
             <tr key={student.id}>
               <td>{student.id}</td>
               <td>{student.name}</td>
