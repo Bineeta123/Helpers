@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SmartStudyPlanner.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using SmartStudyPlanner;
 
 namespace SmartStudyPlanner.Controllers
 {
@@ -15,18 +17,23 @@ namespace SmartStudyPlanner.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public AuthController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost("register")]
+
+        
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email) ||
@@ -76,6 +83,25 @@ namespace SmartStudyPlanner.Controllers
             }
 
             await _userManager.AddToRoleAsync(user, request.Role);
+
+            if (request.Role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            {
+                var studentExists = await _context.Students
+                    .AnyAsync(student => student.Email == request.Email);
+
+                if (!studentExists)
+                {
+                    var student = new Student
+                    {
+                        Name = request.Email.Split('@')[0],
+                        Email = request.Email,
+                        Status = "Active"
+                    };
+
+                    _context.Students.Add(student);
+                    await _context.SaveChangesAsync();
+                }
+            }
 
             return Ok(new
             {

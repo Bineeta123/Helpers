@@ -1,7 +1,6 @@
 import './Students.css'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StudentModal from "../../components/StudentModal/StudentModal";
-import AddStudentModal from "../../components/AddStudentModal/AddStudentModal";
 //yo students[] lai return agadi matra add gareko cha
 
 // const students = [
@@ -35,55 +34,64 @@ import AddStudentModal from "../../components/AddStudentModal/AddStudentModal";
 //   },
 // ]
 
-export default function Students() {
-    //before return add gareko
-    const [selectedStudent, setSelectedStudent] = useState<any>(null);
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    //adding for dynamic search
+const API_BASE_URL = "http://localhost:5065/api/students";
 
-    const [students,setStudents] = useState([
-  {
-    id: 1,
-    name: "John Smith",
-    email: "john@gmail.com",
-    semester: "6th",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Emma Watson",
-    email: "emma@gmail.com",
-    semester: "5th",
-    status: "Active",
-  },
-  {
-    id: 3,
-    name: "David Lee",
-    email: "david@gmail.com",
-    semester: "4th",
-    status: "Inactive",
-  },
-  {
-    id: 4,
-    name: "Sophia Brown",
-    email: "sophia@gmail.com",
-    semester: "7th",
-    status: "Active",
-  },
-]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const handleAddStudent = (student: {
+interface Student {
+  id: number;
   name: string;
   email: string;
   semester: string;
   status: string;
-}) => {
-  const newStudent = {
-    id: students.length + 1,
-    ...student,
-  };
+}
 
-  setStudents([...students, newStudent]);
+export default function Students() {
+    //before return add gareko
+    const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+    //adding for dynamic search
+
+    const [students,setStudents] = useState<Student[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+
+useEffect(() => {
+  fetch(API_BASE_URL)
+    .then((response) => response.json())
+    .then((data) =>
+      setStudents(
+        data.map((student: Student) => ({
+          ...student,
+          semester: student.semester || "",
+        }))
+      )
+    )
+    .catch((error) => console.error("Failed to load students:", error));
+}, []);
+
+const handleDeleteStudent = async (id: number) => {
+  const confirmDelete = window.confirm("Are you sure you want to delete this student?");
+
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      alert("Failed to delete student.");
+      return;
+    }
+
+    setStudents((currentStudents) =>
+      currentStudents.filter((student) => student.id !== id)
+    );
+
+    if (selectedStudent?.id === id) {
+      setSelectedStudent(null);
+    }
+  } catch (error) {
+    console.error("Failed to delete student:", error);
+    alert("Something went wrong while deleting student.");
+  }
 };
 
 const filteredStudents = students.filter((student) =>
@@ -100,10 +108,6 @@ const filteredStudents = students.filter((student) =>
           <p>Manage registered students.</p>
         </div>
 
-        <button className="add-btn" onClick={() => setIsAddModalOpen(true)}
-        >
-          + Add Student
-        </button>
       </div>
 
       <div className="search-box">
@@ -159,7 +163,10 @@ const filteredStudents = students.filter((student) =>
   View
 </button>
 
-                <button className="delete-btn">
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteStudent(student.id)}
+                >
                   Delete
                 </button>
               </td>
@@ -172,12 +179,6 @@ const filteredStudents = students.filter((student) =>
     <StudentModal
   student={selectedStudent}
   onClose={() => setSelectedStudent(null)}
-/>
-
-  <AddStudentModal
-  open={isAddModalOpen}
-  onClose={() => setIsAddModalOpen(false)}
-  onSave={handleAddStudent}
 />
     </div>
   )
