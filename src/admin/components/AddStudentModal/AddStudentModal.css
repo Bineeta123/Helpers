@@ -1,0 +1,42 @@
+.add-student-modal {
+    background: white;
+    width: 420px;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.add-student-modal h2 {
+    margin-bottom: 20px;
+}
+
+.add-student-modal input,
+.add-student-modal select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.save-btn {
+    background: #0f766e;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background: #e5e7eb;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}

@@ -1,7 +1,7 @@
 import './Students.css'
 import { useState } from "react";
 import StudentModal from "../../components/StudentModal/StudentModal";
-
+import AddStudentModal from "../../components/AddStudentModal/AddStudentModal";
 //yo students[] lai return agadi matra add gareko cha
 
 // const students = [
@@ -38,9 +38,10 @@ import StudentModal from "../../components/StudentModal/StudentModal";
 export default function Students() {
     //before return add gareko
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     //adding for dynamic search
 
-    const [students] = useState([
+    const [students,setStudents] = useState([
   {
     id: 1,
     name: "John Smith",
@@ -71,6 +72,19 @@ export default function Students() {
   },
 ]);
     const [searchTerm, setSearchTerm] = useState("");
+    const handleAddStudent = (student: {
+  name: string;
+  email: string;
+  semester: string;
+  status: string;
+}) => {
+  const newStudent = {
+    id: students.length + 1,
+    ...student,
+  };
+
+  setStudents([...students, newStudent]);
+};
 
 const filteredStudents = students.filter((student) =>
   student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -86,7 +100,8 @@ const filteredStudents = students.filter((student) =>
           <p>Manage registered students.</p>
         </div>
 
-        <button className="add-btn">
+        <button className="add-btn" onClick={() => setIsAddModalOpen(true)}
+        >
           + Add Student
         </button>
       </div>
@@ -139,7 +154,7 @@ const filteredStudents = students.filter((student) =>
 
                 <button
   className="view-btn"
-  onClick={() => setSelectedStudent(student)}
+   onClick={() => setSelectedStudent(student)}
 >
   View
 </button>
@@ -157,6 +172,12 @@ const filteredStudents = students.filter((student) =>
     <StudentModal
   student={selectedStudent}
   onClose={() => setSelectedStudent(null)}
+/>
+
+  <AddStudentModal
+  open={isAddModalOpen}
+  onClose={() => setIsAddModalOpen(false)}
+  onSave={handleAddStudent}
 />
     </div>
   )
