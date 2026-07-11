@@ -4,7 +4,6 @@ interface Student {
   id: number;
   name: string;
   email: string;
-  semester: string;
   status: string;
 }
 
@@ -29,7 +28,6 @@ export default function StudentModal({
         <p><strong>ID:</strong> {student.id}</p>
         <p><strong>Name:</strong> {student.name}</p>
         <p><strong>Email:</strong> {student.email}</p>
-        <p><strong>Semester:</strong> {student.semester}</p>
         <p><strong>Status:</strong> {student.status}</p>
 
         <button
