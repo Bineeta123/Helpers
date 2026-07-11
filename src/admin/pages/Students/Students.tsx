@@ -2,41 +2,74 @@ import './Students.css'
 import { useState } from "react";
 import StudentModal from "../../components/StudentModal/StudentModal";
 
-const students = [
-  {
-    id: 1,
-    name: 'John Smith',
-    email: 'john@gmail.com',
-    semester: '6th',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    name: 'Emma Watson',
-    email: 'emma@gmail.com',
-    semester: '5th',
-    status: 'Active',
-  },
-  {
-    id: 3,
-    name: 'David Lee',
-    email: 'david@gmail.com',
-    semester: '4th',
-    status: 'Inactive',
-  },
-  {
-    id: 4,
-    name: 'Sophia Brown',
-    email: 'sophia@gmail.com',
-    semester: '7th',
-    status: 'Active',
-  },
-]
+//yo students[] lai return agadi matra add gareko cha
+
+// const students = [
+//   {
+//     id: 1,
+//     name: 'John Smith',
+//     email: 'john@gmail.com',
+//     semester: '6th',
+//     status: 'Active',
+//   },
+//   {
+//     id: 2,
+//     name: 'Emma Watson',
+//     email: 'emma@gmail.com',
+//     semester: '5th',
+//     status: 'Active',
+//   },
+//   {
+//     id: 3,
+//     name: 'David Lee',
+//     email: 'david@gmail.com',
+//     semester: '4th',
+//     status: 'Inactive',
+//   },
+//   {
+//     id: 4,
+//     name: 'Sophia Brown',
+//     email: 'sophia@gmail.com',
+//     semester: '7th',
+//     status: 'Active',
+//   },
+// ]
 
 export default function Students() {
     //before return add gareko
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
     //adding for dynamic search
+
+    const [students] = useState([
+  {
+    id: 1,
+    name: "John Smith",
+    email: "john@gmail.com",
+    semester: "6th",
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Emma Watson",
+    email: "emma@gmail.com",
+    semester: "5th",
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "David Lee",
+    email: "david@gmail.com",
+    semester: "4th",
+    status: "Inactive",
+  },
+  {
+    id: 4,
+    name: "Sophia Brown",
+    email: "sophia@gmail.com",
+    semester: "7th",
+    status: "Active",
+  },
+]);
     const [searchTerm, setSearchTerm] = useState("");
 
 const filteredStudents = students.filter((student) =>
