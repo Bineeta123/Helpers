@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import "./AddStudentModal.css";
 
 interface Props {
@@ -7,9 +7,16 @@ interface Props {
   onSave: (student: {
     name: string;
     email: string;
-    semester: string;
     status: string;
   }) => void;
+  
+  student?: {
+    id: number;
+    name: string;
+    email: string;
+    status: string;
+  } | null;
+
 
 }
 
@@ -17,18 +24,29 @@ export default function AddStudentModal({
   open,
   onClose,
   onSave,
+  student,
 }: Props) {
   if (!open) return null;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [semester, setSemester] = useState("");
   const [status, setStatus] = useState("Active");
+
+  useEffect(() => {
+  if (student) {
+    setName(student.name);
+    setEmail(student.email);
+    setStatus(student.status);
+  } else {
+    setName("");
+    setEmail("");
+    setStatus("Active");
+  }
+}, [student, open]);
 
   return (
     <div className="modal-overlay">
       <div className="add-student-modal">
-
-        <h2>Add Student</h2>
+        <h2>{student ? "Edit Student" : "Add Student"}</h2>
 
         <input
           type="text"
@@ -44,13 +62,6 @@ export default function AddStudentModal({
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <input
-          type="text"
-          placeholder="Semester"
-          value={semester}
-          onChange={(e) => setSemester(e.target.value)}
-        />
-
         <select 
         value={status}
          onChange={(e) => setStatus(e.target.value)}>
@@ -64,20 +75,18 @@ export default function AddStudentModal({
             onSave({
                 name,
                 email,
-                semester,
                 status,
               });
 
     setName("");
     setEmail("");
-    setSemester("");
     setStatus("Active");
 
     onClose();
   }}
           
            >
-           Save
+            {student ? "Update" : "Save"} 
           </button>
 
           <button

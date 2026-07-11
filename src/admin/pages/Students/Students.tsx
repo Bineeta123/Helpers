@@ -39,6 +39,7 @@ export default function Students() {
     //before return add gareko
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [editingStudent, setEditingStudent] = useState<any>(null);
     //adding for dynamic search
 
     const [students,setStudents] = useState([
@@ -46,28 +47,24 @@ export default function Students() {
     id: 1,
     name: "John Smith",
     email: "john@gmail.com",
-    semester: "6th",
     status: "Active",
   },
   {
     id: 2,
     name: "Emma Watson",
     email: "emma@gmail.com",
-    semester: "5th",
     status: "Active",
   },
   {
     id: 3,
     name: "David Lee",
     email: "david@gmail.com",
-    semester: "4th",
     status: "Inactive",
   },
   {
     id: 4,
     name: "Sophia Brown",
     email: "sophia@gmail.com",
-    semester: "7th",
     status: "Active",
   },
 ]);
@@ -75,12 +72,26 @@ export default function Students() {
     const handleAddStudent = (student: {
   name: string;
   email: string;
-  semester: string;
   status: string;
 }) => {
-  const newStudent = {
-    id: students.length + 1,
-    ...student,
+  if (editingStudent) {
+    setStudents(
+      students.map((s) =>
+        s.id === editingStudent.id
+          ? { ...s, ...student }
+          : s
+      )
+    );
+  } else {
+    const newStudent = {
+      id: students.length + 1,
+      ...student,
+    };
+
+    setStudents([...students, newStudent]);
+  }
+
+  setEditingStudent(null);
   };
 
   setStudents([...students, newStudent]);
@@ -88,8 +99,7 @@ export default function Students() {
 
 const filteredStudents = students.filter((student) =>
   student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  student.semester.toLowerCase().includes(searchTerm.toLowerCase())
+  student.email.toLowerCase().includes(searchTerm.toLowerCase()) 
 );//upto here
   return (
     <div className="students-page">
@@ -100,7 +110,11 @@ const filteredStudents = students.filter((student) =>
           <p>Manage registered students.</p>
         </div>
 
-        <button className="add-btn" onClick={() => setIsAddModalOpen(true)}
+        <button className="add-btn" onClick={() => 
+        {
+        setEditingStudent(null);
+        setIsAddModalOpen(true);
+       }}
         >
           + Add Student
         </button>
@@ -122,7 +136,6 @@ const filteredStudents = students.filter((student) =>
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Semester</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -134,7 +147,6 @@ const filteredStudents = students.filter((student) =>
               <td>{student.id}</td>
               <td>{student.name}</td>
               <td>{student.email}</td>
-              <td>{student.semester}</td>
               <td>
                 <span
                   className={
@@ -153,11 +165,21 @@ const filteredStudents = students.filter((student) =>
                 </button> */}
 
                 <button
-  className="view-btn"
-   onClick={() => setSelectedStudent(student)}
->
-  View
-</button>
+           className="view-btn"
+          onClick={() => setSelectedStudent(student)}
+          > 
+          View
+               </button>
+
+               <button
+         className="edit-btn"
+        onClick={() => {
+       setEditingStudent(student);
+       setIsAddModalOpen(true);
+      }}
+      >
+      Edit
+              </button>
 
                 <button className="delete-btn">
                   Delete
@@ -178,6 +200,7 @@ const filteredStudents = students.filter((student) =>
   open={isAddModalOpen}
   onClose={() => setIsAddModalOpen(false)}
   onSave={handleAddStudent}
+    student={editingStudent}
 />
     </div>
   )
