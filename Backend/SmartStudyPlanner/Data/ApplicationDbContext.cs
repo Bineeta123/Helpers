@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SmartStudyPlanner.Models;
 
 namespace SmartStudyPlanner
 {
@@ -9,5 +10,8 @@ namespace SmartStudyPlanner
             : base(options)
         {
         }
+
+        public DbSet<Student> Students { get; set; }
+    
     }
 }
