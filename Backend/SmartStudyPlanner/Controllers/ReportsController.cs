@@ -33,9 +33,9 @@ namespace SmartStudyPlanner.Controllers
                 ResourcesUploaded = _context.Resources.Count(),
                 AverageCompletion = 0,
                 MonthlySummary =
-         $"Assignments Submitted: {assignmentsSubmitted}, " +
-         $"Resources Uploaded: {resourcesUploaded}, " +
-         $"Average Student Progress: 0%"
+                 $"Assignments Submitted: {assignmentsSubmitted}, " +
+                 $"Resources Uploaded: {resourcesUploaded}, " +
+                 $"Average Student Progress: 0%"
             };
 
             return Ok(report);

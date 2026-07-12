@@ -15,5 +15,7 @@ namespace SmartStudyPlanner
         public DbSet<Assignments> Assignments { get; set; }
 
         public DbSet<Resources> Resources { get; set; }
+
+     
     }
 }
