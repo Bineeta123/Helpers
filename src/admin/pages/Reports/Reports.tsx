@@ -1,39 +1,70 @@
+import { useEffect, useState } from "react";
 import "./Reports.css";
 
-const reportData = [
-  {
-    icon: "👨‍🎓",
-    title: "Total Students",
-    value: 128,
-  },
-  {
-    icon: "📚",
-    title: "Assignments Submitted",
-    value: 96,
-  },
-  {
-    icon: "📁",
-    title: "Resources Uploaded",
-    value: 42,
-  },
-  {
-    icon: "📈",
-    title: "Average Completion",
-    value: "75%",
-  },
-];
+interface Report {
+  totalStudents: number;
+  assignmentsSubmitted: number;
+  resourcesUploaded: number;
+  averageCompletion: number;
+  monthlySummary: string;
+}
 
 export default function Reports() {
+  const [report, setReport] = useState<Report | null>(null);
+
+  const fetchReport = async () => {
+    try {
+      const response = await fetch("https://localhost:7161/api/Reports");
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch report.");
+      }
+
+      const data = await response.json();
+      setReport(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReport();
+  }, []);
+
+  const reportData = report
+    ? [
+        {
+          icon: "👨‍🎓",
+          title: "Total Students",
+          value: report.totalStudents,
+        },
+        {
+          icon: "📚",
+          title: "Assignments Submitted",
+          value: report.assignmentsSubmitted,
+        },
+        {
+          icon: "📁",
+          title: "Resources Uploaded",
+          value: report.resourcesUploaded,
+        },
+        {
+          icon: "📈",
+          title: "Average Completion",
+          value: `${report.averageCompletion}%`,
+        },
+      ]
+    : [];
+
   return (
     <div className="reports-page">
-
       <div className="reports-header">
         <div>
           <h1>Reports</h1>
           <p>Overview of system statistics.</p>
         </div>
 
-        <button className="refresh-btn">
+        <button className="refresh-btn" onClick={fetchReport}>
           Refresh
         </button>
       </div>
@@ -53,14 +84,16 @@ export default function Reports() {
       <div className="recent-report">
         <h2>Monthly Summary</h2>
 
-        <ul>
-          <li>✔ 96 Assignments Submitted</li>
-          <li>✔ 42 Resources Uploaded</li>
-          <li>✔ 18 New Students Registered</li>
-          <li>✔ Average Student Progress: 75%</li>
-        </ul>
+        {report && (
+          <ul>
+            <li>✔ {report.assignmentsSubmitted} Assignments Submitted</li>
+            <li>✔ {report.resourcesUploaded} Resources Uploaded</li>
+            <li>
+              ✔ Average Student Progress: {report.averageCompletion}%
+            </li>
+          </ul>
+        )}
       </div>
-
     </div>
   );
 }
