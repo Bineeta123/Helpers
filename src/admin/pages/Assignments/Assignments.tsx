@@ -1,36 +1,41 @@
 import "./Assignments.css";
+import { useState } from "react";
 
 const assignments = [
   {
     id: 1,
-    title: "Database Project",
-    subject: "Database",
-    deadline: "2026-07-20",
-    semester: "6th",
+    title: "DBMS Lab",
+    subject: "DBMS",
+    dueDate: "2026-07-15",
     status: "Pending",
   },
   {
     id: 2,
-    title: "React UI",
+    title: "React Project",
     subject: "Web Technology",
-    deadline: "2026-07-18",
-    semester: "5th",
-    status: "Submitted",
+    dueDate: "2026-07-20",
+    status: "Completed",
   },
   {
     id: 3,
-    title: "Networking Lab",
+    title: "Network Report",
     subject: "Computer Networks",
-    deadline: "2026-07-25",
-    semester: "4th",
+    dueDate: "2026-07-25",
     status: "Pending",
   },
 ];
 
 export default function Assignments() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredAssignments = assignments.filter(
+    (assignment) =>
+      assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assignment.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="assignments-page">
-
       <div className="assignments-header">
         <div>
           <h1>Assignments</h1>
@@ -45,35 +50,37 @@ export default function Assignments() {
       <div className="search-box">
         <input
           type="text"
-          placeholder="Search assignment..."
+          placeholder="Search assignments..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       <table className="assignments-table">
         <thead>
           <tr>
+            <th>ID</th>
             <th>Title</th>
             <th>Subject</th>
-            <th>Deadline</th>
-            <th>Semester</th>
+            <th>Due Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
 
         <tbody>
-          {assignments.map((assignment) => (
+          {filteredAssignments.map((assignment) => (
             <tr key={assignment.id}>
+              <td>{assignment.id}</td>
               <td>{assignment.title}</td>
               <td>{assignment.subject}</td>
-              <td>{assignment.deadline}</td>
-              <td>{assignment.semester}</td>
+              <td>{assignment.dueDate}</td>
 
               <td>
                 <span
                   className={
-                    assignment.status === "Submitted"
-                      ? "status submitted"
+                    assignment.status === "Completed"
+                      ? "status completed"
                       : "status pending"
                   }
                 >
@@ -82,15 +89,18 @@ export default function Assignments() {
               </td>
 
               <td>
-                <button className="edit-btn">Edit</button>
+                <button className="view-btn">
+                  View
+                </button>
 
-                <button className="delete-btn">Delete</button>
+                <button className="delete-btn">
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }

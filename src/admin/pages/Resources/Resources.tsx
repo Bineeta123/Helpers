@@ -1,4 +1,5 @@
 import "./Resources.css";
+import { useState } from "react";
 
 const resources = [
   {
@@ -25,9 +26,17 @@ const resources = [
 ];
 
 export default function Resources() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredResources = resources.filter(
+    (resource) =>
+      resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      resource.type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="resources-page">
-
       <div className="resources-header">
         <div>
           <h1>Resources</h1>
@@ -43,6 +52,8 @@ export default function Resources() {
         <input
           type="text"
           placeholder="Search resources..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
@@ -58,7 +69,7 @@ export default function Resources() {
         </thead>
 
         <tbody>
-          {resources.map((resource) => (
+          {filteredResources.map((resource) => (
             <tr key={resource.id}>
               <td>{resource.title}</td>
               <td>{resource.subject}</td>
@@ -66,15 +77,18 @@ export default function Resources() {
               <td>{resource.uploadedBy}</td>
 
               <td>
-                <button className="edit-btn">Edit</button>
+                <button className="view-btn">
+                  View
+                </button>
 
-                <button className="delete-btn">Delete</button>
+                <button className="delete-btn">
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }
