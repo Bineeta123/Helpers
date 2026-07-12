@@ -12,7 +12,6 @@ namespace SmartStudyPlanner.Models
         [Required]
         public string Subject { get; set; } = string.Empty;
 
-        public string? Details { get; set; }
 
         [Required]
         public DateTime DueDate { get; set; }
