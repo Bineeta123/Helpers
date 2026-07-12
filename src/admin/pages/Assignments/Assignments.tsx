@@ -4,25 +4,51 @@ import { useState } from "react";
 const assignments = [
   {
     id: 1,
-    title: "DBMS Lab",
-    subject: "DBMS",
+    title: "Operating System Lab1",
+    subject: "Operating Systems",
     dueDate: "2026-07-15",
-    status: "Pending",
   },
   {
     id: 2,
-    title: "React Project",
-    subject: "Web Technology",
-    dueDate: "2026-07-20",
-    status: "Completed",
+    title: "Agile Assignment 1",
+    subject: "Software Dependability",
+    dueDate: "2026-07-25",
   },
   {
     id: 3,
-    title: "Network Report",
-    subject: "Computer Networks",
-    dueDate: "2026-07-25",
-    status: "Pending",
+    title: "AI Project",
+    subject: "Artificial Intelligence",
+    dueDate: "2026-07-26",
   },
+  {
+    id: 4,
+    title: "Network Programming Report",
+    subject: "Network Programming",
+    dueDate: "2026-07-26",
+   
+  },
+  {
+    id: 5,
+    title: "Software Dependability Assignment",
+    subject: "Software Dependability",
+    dueDate: "2026-07-27",
+   
+  },
+  {
+    id: 6,
+    title: "Agile Assignment 2",
+    subject: "Agile Software Development",
+    dueDate: "2026-08-08",
+    
+  },
+  {
+    id: 7,
+    title: "Operating System Lab2",
+    subject: "Operating Systems",
+    dueDate: "2026-08-03",
+   
+  },
+  
 ];
 
 export default function Assignments() {
@@ -62,8 +88,7 @@ export default function Assignments() {
             <th>ID</th>
             <th>Title</th>
             <th>Subject</th>
-            <th>Due Date</th>
-            <th>Status</th>
+            <th>Due Date</th>          
             <th>Action</th>
           </tr>
         </thead>
@@ -75,19 +100,6 @@ export default function Assignments() {
               <td>{assignment.title}</td>
               <td>{assignment.subject}</td>
               <td>{assignment.dueDate}</td>
-
-              <td>
-                <span
-                  className={
-                    assignment.status === "Completed"
-                      ? "status completed"
-                      : "status pending"
-                  }
-                >
-                  {assignment.status}
-                </span>
-              </td>
-
               <td>
                 <button className="view-btn">
                   View

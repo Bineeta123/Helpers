@@ -208,7 +208,7 @@ export default function Dashboard()
         </div>
         <div className="activity-row">
           <span>Yesterday</span>
-          <span>Applied Software Dependability</span>
+          <span>Software Dependability</span>
           <span>Practice Session</span>
           <span className="status pending">Pending</span>
           <span>•••</span>
