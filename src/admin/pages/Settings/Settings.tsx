@@ -36,10 +36,18 @@ export default function Settings() {
         </div>
 
         <div className="form-group">
-          <label>University</label>
+          <label>Daily Study Goal (Hours)</label>
           <input
-            type="text"
-            defaultValue="Pokhara University"
+            type="number"
+            defaultValue="4"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Default Study Session (Minutes)</label>
+          <input
+            type="number"
+            defaultValue="50"
           />
         </div>
 
@@ -50,16 +58,6 @@ export default function Settings() {
             placeholder="Enter new password"
           />
         </div>
-
-      </div>
-
-      <div className="settings-card">
-
-        <h2>Account</h2>
-
-        <button className="logout-btn">
-          Logout
-        </button>
 
       </div>
 
