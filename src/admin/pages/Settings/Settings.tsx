@@ -36,22 +36,6 @@ export default function Settings() {
         </div>
 
         <div className="form-group">
-          <label>Daily Study Goal (Hours)</label>
-          <input
-            type="number"
-            defaultValue="4"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Default Study Session (Minutes)</label>
-          <input
-            type="number"
-            defaultValue="50"
-          />
-        </div>
-
-        <div className="form-group">
           <label>New Password</label>
           <input
             type="password"
