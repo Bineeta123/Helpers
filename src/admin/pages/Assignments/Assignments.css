@@ -110,3 +110,61 @@
     border-radius:6px;
     cursor:pointer;
 }
+
+.assignment-form {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.assignment-form input,
+.assignment-form textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.assignment-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.assignment-form input:focus,
+.assignment-form textarea:focus {
+    border-color: #0f766e;
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.assignment-form div {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.assignment-details {
+    background: white;
+    padding: 20px;
+    border-left: 5px solid #0f766e;
+    border-radius: 10px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.assignment-details h2 {
+    margin-top: 0;
+    color: #1f2937;
+}
+
+.assignment-details p {
+    margin: 8px 0;
+    color: #374151;
+}
