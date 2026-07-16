@@ -1,8 +1,8 @@
 .admin-sidebar {
   width: 260px;
   height: 100vh;
-  background: #f8faf8;
-  border-right: 1px solid #dbe5dd;
+  background: #fbfcfe;
+  border-right: 1px solid #dbe4ef;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -24,6 +24,9 @@
   margin-top: 6px;
   color: #6b7a73;
   font-size: 14px;
+}
+.admin-logo{
+    margin-top:60px;
 }
 
 .admin-menu {
@@ -50,9 +53,9 @@
   background: #e7efea;
 }
 
-.admin-menu-item.active {
-  background: #355c4d;
-  color: #fff;
+.admin-menu-item.active{
+    background:#475569;
+    color:white;
 }
 
 .logout-button {
@@ -61,7 +64,7 @@
   justify-content: center;
   gap: 11px;
   padding: 14px;
-  background: #355c4d;
+  background:#475569;
   color: white;
   border: none;
   border-radius: 12px;
@@ -71,11 +74,24 @@
 }
 
 .logout-button:hover {
-  background: #29443a;
+ background:#374151;
 }
 
 .admin-menu-item.active {
     background: #0f766e;
     color: white;
     text-decoration: none;
+}
+
+@media (max-width:768px){
+
+  .admin-sidebar{
+    width:220px;
+    height:100vh;
+    
+  }
+  .admin-logo{
+    margin-top:60px;
+  }
+
 }

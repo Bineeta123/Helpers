@@ -91,7 +91,7 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       <AdminSidebar />
 
-      <main className="dashboard-content">
+      <main className="admin-dashboard-content">
 
         <div className="dashboard-header">
           <h1>Hello, {adminUser} 👋</h1>
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
 
         {/* Row 1 */}
 
-        <div className="dashboard-grid">
+        <div className="admin-dashboard-grid">
 
           <div className="dashboard-card">
 

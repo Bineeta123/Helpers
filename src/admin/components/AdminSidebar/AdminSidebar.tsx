@@ -67,7 +67,7 @@ export default function AdminSidebar() {
       <div>
         <div className="admin-logo">
           <h2>Study Planner</h2>
-          <p>Admin Portal</p>
+          <p>Teacher Portal</p>
         </div>
 
         <nav className="admin-menu">
