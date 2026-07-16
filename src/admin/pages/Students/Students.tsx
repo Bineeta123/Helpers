@@ -1,8 +1,6 @@
-
-
 import "./Students.css";
 import { useEffect, useState } from "react";
-import StudentModal from "../../components/StudentModal/StudentModal";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:5065/api/students";
 
@@ -14,7 +12,7 @@ interface Student {
 }
 
 export default function Students() {
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -47,10 +45,6 @@ export default function Students() {
       setStudents((currentStudents) =>
         currentStudents.filter((student) => student.id !== id)
       );
-
-      if (selectedStudent?.id === id) {
-        setSelectedStudent(null);
-      }
     } catch (error) {
       console.error("Failed to delete student:", error);
       alert("Something went wrong while deleting student.");
@@ -84,7 +78,6 @@ export default function Students() {
       <table className="students-table">
         <thead>
           <tr>
-         
             <th>Name</th>
             <th>Email</th>
             <th>Status</th>
@@ -95,7 +88,6 @@ export default function Students() {
         <tbody>
           {filteredStudents.map((student) => (
             <tr key={student.id}>
-             
               <td>{student.name}</td>
               <td>{student.email}</td>
 
@@ -114,7 +106,7 @@ export default function Students() {
               <td>
                 <button
                   className="view-btn"
-                  onClick={() => setSelectedStudent(student)}
+                  onClick={() => navigate(`/admin/reports/${student.id}`)}
                 >
                   View
                 </button>
@@ -130,11 +122,6 @@ export default function Students() {
           ))}
         </tbody>
       </table>
-
-      <StudentModal
-        student={selectedStudent}
-        onClose={() => setSelectedStudent(null)}
-      />
     </div>
   );
 }

@@ -1,13 +1,5 @@
-// import AdminDashboard from "./pages/Dashboard/AdminDashboard";
-
-// export default function AdminApp() {
-//   return <AdminDashboard />;
-// }
-
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import AdminLayout from "./layout/AdminLayout";
-
 import AdminDashboard from "./pages/Dashboard/AdminDashboard";
 import Students from "./pages/Students/Students";
 import Assignments from "./pages/Assignments/Assignments";
@@ -23,7 +15,7 @@ export default function AdminApp() {
         <Route path="students" element={<Students />} />
         <Route path="assignments" element={<Assignments />} />
         <Route path="resources" element={<Resources />} />
-        <Route path="reports" element={<Reports />} />
+        <Route path="reports/:studentId" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 

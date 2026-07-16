@@ -1,98 +1,150 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Reports.css";
 
-interface Report {
-  totalStudents: number;
+interface StudentReport {
+  studentId: number;
+  studentName: string;
   assignmentsSubmitted: number;
-  resourcesUploaded: number;
-  averageCompletion: number;
-  monthlySummary: string;
+  assignmentsNotSubmitted: number;
+  resourcesViewed: number;
+  progress: number;
+  loginCount: number;
 }
 
 export default function Reports() {
-  const [report, setReport] = useState<Report | null>(null);
+  const { studentId } = useParams<{ studentId: string }>();
+  const navigate = useNavigate();
+  const [report, setReport] = useState<StudentReport | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const fetchReport = async () => {
-    try {
-      const response = await fetch("https://localhost:7161/api/Reports");
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch report.");
+  const fetchStudentReport = async () => {
+    const endpoints = [
+      `http://localhost:5065/api/Reports/student/${studentId}`,
+      `https://localhost:7161/api/Reports/student/${studentId}`
+    ];
+    
+    let reportData = null;
+    
+    for (const url of endpoints) {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          reportData = await response.json();
+          break; // Found working port!
+        }
+      } catch (err) {
+        // Silence connection errors and try next port
       }
-
-      const data = await response.json();
-      setReport(data);
-    } catch (error) {
-      console.error(error);
     }
+
+    if (reportData) {
+      setReport(reportData);
+    } else {
+      console.error("Failed to fetch student report from all configured backend endpoints.");
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchReport();
-  }, []);
+    fetchStudentReport();
+  }, [studentId]);
 
-  const reportData = report
-    ? [
-        {
-          icon: "👨‍🎓",
-          title: "Total Students",
-          value: report.totalStudents,
-        },
-        {
-          icon: "📚",
-          title: "Assignments Submitted",
-          value: report.assignmentsSubmitted,
-        },
-        {
-          icon: "📁",
-          title: "Resources Uploaded",
-          value: report.resourcesUploaded,
-        },
-        {
-          icon: "📈",
-          title: "Average Completion",
-          value: `${report.averageCompletion}%`,
-        },
-      ]
-    : [];
+  if (loading) {
+    return <div className="reports-page"><p>Loading report data...</p></div>;
+  }
+
+  if (!report) {
+    return (
+      <div className="reports-page">
+        <p>No report found for this student.</p>
+        <button className="refresh-btn" onClick={() => navigate("/admin/students")}>
+          Back to Students
+        </button>
+      </div>
+    );
+  }
+
+  const reportData = [
+    {
+      icon: "📚",
+      title: "Assignments Submitted",
+      value: report.assignmentsSubmitted,
+    },
+    {
+      icon: "❌",
+      title: "Assignments Pending",
+      value: report.assignmentsNotSubmitted,
+    },
+    {
+      icon: "📁",
+      title: "Resources Viewed",
+      value: report.resourcesViewed,
+    },
+    {
+      icon: "🔑",
+      title: "Times Logged In",
+      value: report.loginCount,
+    },
+  ];
 
   return (
     <div className="reports-page">
       <div className="reports-header">
         <div>
-          <h1>Reports</h1>
-          <p>Overview of system statistics.</p>
+          <button
+            className="back-btn"
+            onClick={() => navigate("/admin/students")}
+            style={{
+              marginBottom: "15px",
+              padding: "8px 16px",
+              cursor: "pointer",
+              backgroundColor: "#4a5568",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              fontWeight: "bold"
+            }}
+          >
+            ← Back to Students
+          </button>
+          <h1>Student Performance Report</h1>
+          <p>Detailed overview for <strong>{report.studentName}</strong> (ID: {report.studentId})</p>
         </div>
-
-        <button className="refresh-btn" onClick={fetchReport}>
-          Refresh
-        </button>
       </div>
 
       <div className="report-grid">
         {reportData.map((item) => (
           <div className="report-card" key={item.title}>
             <div className="report-icon">{item.icon}</div>
-
             <h3>{item.title}</h3>
-
             <h2>{item.value}</h2>
           </div>
         ))}
       </div>
 
       <div className="recent-report">
-        <h2>Monthly Summary</h2>
-
-        {report && (
-          <ul>
-            <li>✔ {report.assignmentsSubmitted} Assignments Submitted</li>
-            <li>✔ {report.resourcesUploaded} Resources Uploaded</li>
-            <li>
-              ✔ Average Student Progress: {report.averageCompletion}%
-            </li>
-          </ul>
-        )}
+        <h2>Learning Progress Indicator</h2>
+        <div style={{ background: "#edf2f7", borderRadius: "10px", padding: "3px", width: "100%", marginTop: "10px" }}>
+          <div
+            style={{
+              width: `${report.progress}%`,
+              background: "#48bb78",
+              height: "24px",
+              borderRadius: "8px",
+              textAlign: "center",
+              color: "white",
+              fontWeight: "bold",
+              lineHeight: "24px",
+              transition: "width 0.5s ease-in-out"
+            }}
+          >
+            {report.progress}% Complete
+          </div>
+        </div>
+        <p style={{ marginTop: "10px", fontSize: "14px", color: "#718096" }}>
+          Progress is computed based on the ratio of assignments submitted against overall assigned tasks.
+        </p>
       </div>
     </div>
   );

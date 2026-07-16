@@ -5,6 +5,25 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>study-planner</title>
+    <script>
+      window.addEventListener('error', function(e) {
+        const div = document.createElement('div');
+        div.style.color = 'red';
+        div.style.padding = '20px';
+        div.style.fontSize = '18px';
+        div.style.zIndex = '999999';
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.background = 'white';
+        div.style.width = '100%';
+        div.style.height = '100%';
+        div.style.overflow = 'auto';
+        div.style.fontFamily = 'monospace';
+        div.innerHTML = '<h1>Client-side Javascript Error Detected</h1><pre>' + e.message + '\n\nStack:\n' + (e.error ? e.error.stack : '') + '</pre>';
+        document.body.appendChild(div);
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

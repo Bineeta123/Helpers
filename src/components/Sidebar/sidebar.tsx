@@ -9,7 +9,6 @@ import {
   FiFolder,
   FiBarChart2,
   FiSettings,
-  FiHelpCircle,
   FiLogOut,
   FiPlus,
 } from 'react-icons/fi'
@@ -24,7 +23,7 @@ const MAIN_ITEMS = [
 ]
 
 export default function Sidebar(): React.ReactElement {
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
 
   const navigate = useNavigate()
 
