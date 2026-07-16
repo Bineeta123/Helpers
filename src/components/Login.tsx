@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import type { UserRole } from '../context/AuthContext'
 
-const roles: UserRole[] = ['admin', 'user']
+const roles: UserRole[] = ['admin', 'student']
 const specialCharacterPattern = /[^A-Za-z0-9]/
 const numberPattern = /\d/
 
@@ -21,7 +21,7 @@ export default function Login({ initialMode = 'signin' }: LoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [role, setRole] = useState<UserRole>('user')
+  const [role, setRole] = useState<UserRole>('student')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -84,9 +84,9 @@ export default function Login({ initialMode = 'signin' }: LoginProps) {
     setLoading(true)
     try {
       if (mode === 'signup') {
-        await signup(name.trim(), email.trim(), password, role)
+        await signup(email.trim(), password, role)
       } else {
-        await login(email.trim(), password, role)
+        await login(email.trim(), password)
       }
 
       navigate(role === 'admin' ? '/admin' : '/student')

@@ -167,10 +167,6 @@ export default function AdminDashboard() {
                 Create Assignment
               </button>
 
-              <button className="action-btn">
-                View Reports
-              </button>
-
             </div>
 
           </div>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartStudyPlanner.Models;
 
@@ -16,6 +16,13 @@ namespace SmartStudyPlanner
 
         public DbSet<Resources> Resources { get; set; }
 
-     
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Assignments>()
+                .Property(a => a.CreatedById)
+                .IsRequired();
+        }
     }
 }

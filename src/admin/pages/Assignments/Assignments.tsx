@@ -1,8 +1,9 @@
 import "./Assignments.css";
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
 
 const API_URL = "https://localhost:7161/api/Assignments";
+
+
 
 type Assignment = {
   id: number;
@@ -10,9 +11,9 @@ type Assignment = {
   subject: string;
   dueDate: string;
   createdAt?: string;
-  status?: "Published" | "Pending";
-  submissions?: number;
-  totalStudents?: number;
+  description?: string;
+  fileName?: string;
+  filePath?: string;
 };
 
 export default function Assignments() {
@@ -20,16 +21,22 @@ export default function Assignments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [subjectFilter, setSubjectFilter] = useState("All");
-const [statusFilter, setStatusFilter] = useState("All");
 
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+
+  const BASE_URL = API_URL.replace("/api/Assignments", "");
 
   const loadAssignments = async () => {
-    const response = await fetch(API_URL);
+    const token = localStorage.getItem("study-planner-token");
+    const response = await fetch(API_URL,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const data = await response.json();
     setAssignments(data);
   };
@@ -41,37 +48,48 @@ const [statusFilter, setStatusFilter] = useState("All");
   const handleAddAssignment = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newAssignment = {
-      title,
-  subject,
-   description,
-  dueDate,
-    };
-
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("subject", subject);
+    formData.append("description", description);
+    formData.append("dueDate", dueDate);
+    if (file) {
+      formData.append("file", file);
+    }
+   
+    const token = localStorage.getItem("study-planner-token");
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newAssignment),
+      body: formData,
     });
 
     if (!response.ok) {
-      alert("Failed to add assignment");
+      const error = await response.text();
+      alert(`Status: ${response.status}\n${error}`);
       return;
     }
 
     setTitle("");
     setSubject("");
-    setDueDate("");
     setDescription("");
+    setDueDate("");
+    setFile(null);
     setShowAddForm(false);
 
     loadAssignments();
   };
 
   const handleView = async (id: number) => {
-    const response = await fetch(`${API_URL}/${id}`);
+   const token = localStorage.getItem("study-planner-token");
+
+    const response = await fetch(`${API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       alert("Assignment not found");
@@ -87,10 +105,15 @@ const [statusFilter, setStatusFilter] = useState("All");
 
     if (!confirmDelete) return;
 
+    const token = localStorage.getItem("study-planner-token");
+
     const response = await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-
+    
     if (!response.ok) {
       alert("Failed to delete assignment");
       return;
@@ -99,29 +122,11 @@ const [statusFilter, setStatusFilter] = useState("All");
     loadAssignments();
   };
 
-  const filteredAssignments = assignments.filter((assignment)=>{
-
-const matchesSearch=
-
-assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-
-assignment.subject.toLowerCase().includes(searchTerm.toLowerCase());
-
-const matchesSubject=
-
-subjectFilter==="All" ||
-
-assignment.subject===subjectFilter;
-
-const matchesStatus=
-
-statusFilter==="All" ||
-
-assignment.status===statusFilter;
-
-return matchesSearch && matchesSubject && matchesStatus;
-
-});
+  const filteredAssignments = assignments.filter(
+    (assignment) =>
+      assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      assignment.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="assignments-page">
@@ -154,6 +159,22 @@ return matchesSearch && matchesSubject && matchesStatus;
             required
           />
 
+          <textarea
+            placeholder="Description/Instructions"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd" }}
+          />
+
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px", color: "#4a5568" }}>Upload Assignment File (Optional):</label>
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              style={{ width: "100%", padding: "5px", border: "1px solid #ddd", borderRadius: "5px", backgroundColor: "#f7fafc" }}
+            />
+          </div>
 
           <input
             type="date"
@@ -161,16 +182,7 @@ return matchesSearch && matchesSubject && matchesStatus;
             onChange={(e) => setDueDate(e.target.value)}
             required
           />
-           
-          <textarea
-          placeholder="Assignment description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={5}
-          required
-           />
-           
-          
+
           <div>
             <button type="submit" className="add-btn">
               Save Assignment
@@ -188,13 +200,22 @@ return matchesSearch && matchesSubject && matchesStatus;
           <h2>{selectedAssignment.title}</h2>
           <p><strong>Subject:</strong> {selectedAssignment.subject}</p>
           <p><strong>Due Date:</strong> {selectedAssignment.dueDate.slice(0, 10)}</p>
-          <p>
-      <strong>Description:</strong>
-    </p>
-
-    <div className="assignment-description">
-      {selectedAssignment.description}
-    </div>
+          {selectedAssignment.description && (
+            <p><strong>Description:</strong> {selectedAssignment.description}</p>
+          )}
+          {selectedAssignment.filePath && (
+            <p>
+              <strong>Attachment:</strong>{" "}
+              <a
+                href={`${BASE_URL}/Uploads/Assignments/${selectedAssignment.filePath}`}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: "#3182ce", textDecoration: "underline", fontWeight: "bold" }}
+              >
+                Download {selectedAssignment.fileName}
+              </a>
+            </p>
+          )}
 
           <button className="delete-btn" onClick={() => setSelectedAssignment(null)}>
             Close
@@ -202,46 +223,14 @@ return matchesSearch && matchesSubject && matchesStatus;
         </div>
       )}
 
-      <div className="search-section">
-
-<input
-type="text"
-placeholder="Search assignments..."
-value={searchTerm}
-onChange={(e)=>setSearchTerm(e.target.value)}
-/>
-
-<select
-value={subjectFilter}
-onChange={(e)=>setSubjectFilter(e.target.value)}
->
-
-<option>All</option>
-
-<option>OS</option>
-
-<option>DBMS</option>
-
-<option>CN</option>
-
-<option>SE</option>
-
-</select>
-
-<select
-value={statusFilter}
-onChange={(e)=>setStatusFilter(e.target.value)}
->
-
-<option>All</option>
-
-<option>Published</option>
-
-<option>Pending</option>
-
-</select>
-
-</div>
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Search assignments..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       <table className="assignments-table">
         <thead>
@@ -249,10 +238,6 @@ onChange={(e)=>setStatusFilter(e.target.value)}
             <th>Title</th>
             <th>Subject</th>
             <th>Due Date</th>
-            <th>Status</th>
-
-            <th>Submissions</th>
-
             <th>Action</th>
           </tr>
         </thead>
@@ -260,58 +245,25 @@ onChange={(e)=>setStatusFilter(e.target.value)}
         <tbody>
           {filteredAssignments.map((assignment) => (
             <tr key={assignment.id}>
+            
+              <td>{assignment.title}</td>
+              <td>{assignment.subject}</td>
+              <td>{assignment.dueDate.slice(0, 10)}</td>
+              <td>
+                <button className="view-btn" onClick={() => handleView(assignment.id)}>
+                  View
+                </button>
 
-<td>{assignment.title}</td>
-
-<td>{assignment.subject}</td>
-
-<td>{assignment.dueDate.slice(0, 10)}</td>
-
-
- <td>
-
-<span className={assignment.status==="Published"
-
-? "status-published"
-
-: "status-pending"}>
-
-{assignment.status || "Published"}
-
-</span>
-
-</td>
-
-<td>
-
-{assignment.submissions || 0}/{assignment.totalStudents || 50}
-
-</td>
-
-<td>
-
-  <button
-    className="view-btn"
-    onClick={() => handleView(assignment.id)}
-  >
-    View
-  </button>
-
-  <button
-    className="delete-btn"
-    onClick={() => handleDelete(assignment.id)}
-  >
-    Delete
-  </button>
-
-</td>
-              
+                <button className="delete-btn" onClick={() => handleDelete(assignment.id)}>
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
 
           {filteredAssignments.length === 0 && (
             <tr>
-              <td colSpan={6}>No assignments found.</td>
+              <td colSpan={5}>No assignments found.</td>
             </tr>
           )}
         </tbody>
