@@ -2,6 +2,7 @@ import "./Resources.css";
 import { useEffect, useState } from "react";
 
 const API_URL = "https://localhost:7161/api/resources";
+const BASE_URL = API_URL.replace("/api/resources", "");
 
 export default function Resources() {
   const [resources, setResources] = useState<any[]>([]);
@@ -174,7 +175,7 @@ export default function Resources() {
     }
 
     window.open(
-      `https://localhost:7240/Uploads/${resource.filePath}`,
+      `${BASE_URL}/Uploads/${resource.filePath}`,
       "_blank"
     );
 

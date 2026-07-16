@@ -3,12 +3,17 @@ import { useEffect, useState, type FormEvent } from "react";
 
 const API_URL = "https://localhost:7161/api/Assignments";
 
+
+
 type Assignment = {
   id: number;
   title: string;
   subject: string;
   dueDate: string;
   createdAt?: string;
+  description?: string;
+  fileName?: string;
+  filePath?: string;
 };
 
 export default function Assignments() {
@@ -20,9 +25,18 @@ export default function Assignments() {
   const [title, setTitle] = useState("");
   const [subject, setSubject] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+
+  const BASE_URL = API_URL.replace("/api/Assignments", "");
 
   const loadAssignments = async () => {
-    const response = await fetch(API_URL);
+    const token = localStorage.getItem("study-planner-token");
+    const response = await fetch(API_URL,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const data = await response.json();
     setAssignments(data);
   };
@@ -34,35 +48,48 @@ export default function Assignments() {
   const handleAddAssignment = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newAssignment = {
-      title,
-      subject,
-      dueDate,
-    };
-
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("subject", subject);
+    formData.append("description", description);
+    formData.append("dueDate", dueDate);
+    if (file) {
+      formData.append("file", file);
+    }
+   
+    const token = localStorage.getItem("study-planner-token");
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newAssignment),
+      body: formData,
     });
 
     if (!response.ok) {
-      alert("Failed to add assignment");
+      const error = await response.text();
+      alert(`Status: ${response.status}\n${error}`);
       return;
     }
 
     setTitle("");
     setSubject("");
+    setDescription("");
     setDueDate("");
+    setFile(null);
     setShowAddForm(false);
 
     loadAssignments();
   };
 
   const handleView = async (id: number) => {
-    const response = await fetch(`${API_URL}/${id}`);
+   const token = localStorage.getItem("study-planner-token");
+
+    const response = await fetch(`${API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (!response.ok) {
       alert("Assignment not found");
@@ -78,10 +105,15 @@ export default function Assignments() {
 
     if (!confirmDelete) return;
 
+    const token = localStorage.getItem("study-planner-token");
+
     const response = await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-
+    
     if (!response.ok) {
       alert("Failed to delete assignment");
       return;
@@ -127,6 +159,22 @@ export default function Assignments() {
             required
           />
 
+          <textarea
+            placeholder="Description/Instructions"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd" }}
+          />
+
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold", fontSize: "14px", color: "#4a5568" }}>Upload Assignment File (Optional):</label>
+            <input
+              type="file"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+              style={{ width: "100%", padding: "5px", border: "1px solid #ddd", borderRadius: "5px", backgroundColor: "#f7fafc" }}
+            />
+          </div>
 
           <input
             type="date"
@@ -152,6 +200,22 @@ export default function Assignments() {
           <h2>{selectedAssignment.title}</h2>
           <p><strong>Subject:</strong> {selectedAssignment.subject}</p>
           <p><strong>Due Date:</strong> {selectedAssignment.dueDate.slice(0, 10)}</p>
+          {selectedAssignment.description && (
+            <p><strong>Description:</strong> {selectedAssignment.description}</p>
+          )}
+          {selectedAssignment.filePath && (
+            <p>
+              <strong>Attachment:</strong>{" "}
+              <a
+                href={`${BASE_URL}/Uploads/Assignments/${selectedAssignment.filePath}`}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: "#3182ce", textDecoration: "underline", fontWeight: "bold" }}
+              >
+                Download {selectedAssignment.fileName}
+              </a>
+            </p>
+          )}
 
           <button className="delete-btn" onClick={() => setSelectedAssignment(null)}>
             Close

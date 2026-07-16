@@ -139,6 +139,7 @@ namespace SmartStudyPlanner.Controllers
             {
                 token,
                 email = user.Email,
+                id = user.Id,
                 role
             });
         }
@@ -147,6 +148,7 @@ namespace SmartStudyPlanner.Controllers
         {
             var claims = new List<Claim>
             {
+                new Claim("userId", user.Id),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.Email!)
             };

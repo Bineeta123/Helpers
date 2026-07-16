@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartStudyPlanner.Models
 {
@@ -8,13 +8,13 @@ namespace SmartStudyPlanner.Models
         public int Id { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Required]
-        public string Subject { get; set; }
+        public string Subject { get; set; } = string.Empty;
 
         [Required]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
 
         public string? FileName { get; set; }
 

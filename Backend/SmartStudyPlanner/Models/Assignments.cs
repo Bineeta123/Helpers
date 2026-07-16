@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartStudyPlanner.Models
 {
@@ -17,5 +17,10 @@ namespace SmartStudyPlanner.Models
         public DateTime DueDate { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public Guid? CreatedById { get; set; }
+
+        public string? Description { get; set; }
+        public string? FileName { get; set; }
+        public string? FilePath { get; set; }
     }
 }
