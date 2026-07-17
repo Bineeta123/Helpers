@@ -2,7 +2,7 @@ import "./Students.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:5065/api/students";
+const API_BASE_URL = "https://localhost:7161/api/students";
 
 interface Student {
   id: number;

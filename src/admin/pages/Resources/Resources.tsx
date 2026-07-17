@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 const API_URL = "https://localhost:7161/api/resources";
 const BASE_URL = API_URL.replace("/api/resources", "");
 
+
+
 export default function Resources() {
   const [resources, setResources] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,7 +25,12 @@ export default function Resources() {
 
   const fetchResources = async () => {
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(API_URL, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("study-planner-token")}`,
+        },
+      });
+
 
       if (!response.ok) {
         throw new Error("Failed to fetch resources");
@@ -95,57 +102,59 @@ export default function Resources() {
     // console.log(newResource);
     // console.log(selectedFile);
 
-  if (
-    !newResource.title ||
-    !newResource.subject ||
-    !newResource.type ||
-    !selectedFile
-  ) {
-    alert("Please fill all fields and choose a file.");
-    return;
-  }
+    if (
+      !newResource.title ||
+      !newResource.subject ||
+      !newResource.type ||
+      !selectedFile
+    ) {
+      alert("Please fill all fields and choose a file.");
+      return;
+    }
 
-  const formData = new FormData();
+    const formData = new FormData();
 
-  formData.append("title", newResource.title);
-  formData.append("subject", newResource.subject);
-  formData.append("type", newResource.type);
-  formData.append("file", selectedFile);
+    formData.append("title", newResource.title);
+    formData.append("subject", newResource.subject);
+    formData.append("type", newResource.type);
+    formData.append("file", selectedFile);
 
-  try {
+    try {
 
-    const response = await fetch(API_URL, {
-      method: "POST",
-      body: formData
-    });
-
-    if (response.ok) {
-
-      fetchResources();
-
-      setNewResource({
-        title: "",
-        subject: "",
-        type: "",
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("study-planner-token")}`,
+        },
+        body: formData
       });
 
-      setSelectedFile(null);
+      if (response.ok) {
 
-      setShowForm(false);
+        fetchResources();
 
-    } else {
+        setNewResource({
+          title: "",
+          subject: "",
+          type: "",
+        });
 
-      alert("Failed to upload resource.");
+        setSelectedFile(null);
+
+        setShowForm(false);
+
+      } else {
+        const errText = await response.text();
+        alert(`Failed to upload resource. Status: ${response.status}. Error: ${errText}`);
+      }
+
+    } catch (error) {
+
+      console.error(error);
 
     }
 
-  } catch (error) {
-
-    console.error(error);
-
-  }
-
-};
+  };
 
   const deleteResource = async (id: number) => {
     const confirmDelete = window.confirm(
@@ -157,6 +166,9 @@ export default function Resources() {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("study-planner-token")}`,
+        },
       });
 
       if (response.ok) {
@@ -175,7 +187,7 @@ export default function Resources() {
     }
 
     window.open(
-      `${BASE_URL}/Uploads/${resource.filePath}`,
+      `${BASE_URL}/Uploads/Resources/${resource.filePath}`,
       "_blank"
     );
 
@@ -242,15 +254,15 @@ export default function Resources() {
           />
 
           <input
-              type="file"
-              accept=".pdf,.ppt,.pptx,.doc,.docx"
-              onChange={(e)=>{
+            type="file"
+            accept=".pdf,.ppt,.pptx,.doc,.docx"
+            onChange={(e) => {
 
-                  if(e.target.files){
-                      setSelectedFile(e.target.files[0]);
-                  }
+              if (e.target.files) {
+                setSelectedFile(e.target.files[0]);
+              }
 
-              }}
+            }}
           />
 
           <div className="form-buttons">
@@ -323,7 +335,7 @@ export default function Resources() {
 
                   <button
                     className="view-btn"
-                    onClick={() => viewResource(resource)}>   
+                    onClick={() => viewResource(resource)}>
                     View
                   </button>
 
@@ -359,3 +371,6 @@ export default function Resources() {
     </div>
   );
 }
+
+
+
