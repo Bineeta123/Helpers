@@ -20,21 +20,32 @@ namespace SmartStudyPlanner.Controllers
         // -------------------------------------------------------------
         private async Task<int?> GetCurrentAdminIdAsync()
         {
+            // 1. Get the userId from the token (This is guaranteed to exist)
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-            if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out var parsedId))
+            
+            if (string.IsNullOrEmpty(userIdClaim)) 
+                return null;
+            // 2. Look up the core IdentityUser using that ID
+            var identityUser = await _context.Users.FindAsync(userIdClaim);
+            if (identityUser == null) 
+                return null;
+            // 3. Now we definitely have your actual email. Let's find your Admin profile.
+            var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == identityUser.Email);
+            
+            // 4. If missing, auto-create it!
+            if (admin == null)
             {
-                return parsedId;
+                admin = new Admin
+                {
+                    Name = identityUser.Email.Split('@')[0],
+                    Email = identityUser.Email
+                };
+                _context.Admins.Add(admin);
+                await _context.SaveChangesAsync();
             }
-
-            var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-            if (!string.IsNullOrEmpty(emailClaim))
-            {
-                var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == emailClaim);
-                return admin?.Id;
-            }
-
-            return null;
+            return admin.Id;
         }
+
 
         // -------------------------------------------------------------
         // GET: api/Resources – returns only the caller’s resources
