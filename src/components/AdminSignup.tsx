@@ -94,7 +94,7 @@ export default function AdminSignup() {
       <div className="auth-card">
         <div className="auth-heading">
           <p>Smart Study Planner</p>
-          <h1>Admin Sign Up</h1>
+          <h1>Teacher Sign Up</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -108,7 +108,7 @@ export default function AdminSignup() {
               required
             />
           </label>
-          <p className="auth-hint">Admin email must end with: hod.ncit.edu.np</p>
+          <p className="auth-hint">Teacher email must end with: hod.ncit.edu.np</p>
 
           <label>
             Password

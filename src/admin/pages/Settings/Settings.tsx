@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./Settings.css";
 
 export default function Settings() {
-  const [adminName, setAdminName] = useState("Admin");
+  const [adminName, setAdminName] = useState("Teacher");
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
@@ -73,7 +73,7 @@ export default function Settings() {
         <h2>Profile Information</h2>
 
         <div className="form-group">
-          <label>Admin Name</label>
+          <label>Teacher Name</label>
           <input
             type="text"
             value={adminName}

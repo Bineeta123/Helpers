@@ -50,7 +50,7 @@ export default function RoleSelector() {
             <div className="role-icon">
               <AdminIcon />
             </div>
-            <h2>Admin</h2>
+            <h2>Teacher</h2>
             <p>Manage courses and students</p>
           </button>
 
