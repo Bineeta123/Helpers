@@ -16,6 +16,8 @@ namespace SmartStudyPlanner
 
         public DbSet<Resources> Resources { get; set; }
 
+        public DbSet<Admin> Admins { get; set; }  
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -23,6 +25,11 @@ namespace SmartStudyPlanner
             modelBuilder.Entity<Assignments>()
                 .Property(a => a.CreatedById)
                 .IsRequired();
+
+            modelBuilder.Entity<Resources>()
+               .HasOne(r => r.Admin)
+               .WithMany(a => a.Resources)
+               .HasForeignKey(r => r.AdminId);
         }
     }
 }

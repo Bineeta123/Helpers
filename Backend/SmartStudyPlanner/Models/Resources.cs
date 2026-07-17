@@ -19,5 +19,10 @@ namespace SmartStudyPlanner.Models
         public string? FileName { get; set; }
 
         public string? FilePath { get; set; }
+
+        public int AdminId { get; set; }
+
+         public Admin? Admin { get; set; }
     }
 }
+
