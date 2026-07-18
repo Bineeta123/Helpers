@@ -29,9 +29,7 @@ export default function Schedule() {
           </div>
         </div>
       </div>
-      <div className="card card-white">
-        <div className="card-title">Today’s Focus</div>
-        <p className="section-copy">Finish the Agile Software Development lab notes and review operating systems concepts before the next class.</p>
+      <div className="card card-white">Finish Agile Development lab notes and review operating systems concepts before the next class.</p>
       </div>
     </section>
   )
