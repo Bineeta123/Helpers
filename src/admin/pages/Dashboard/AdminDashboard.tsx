@@ -30,7 +30,8 @@ export default function AdminDashboard() {
   const [deadlines, setDeadlines] = useState<Deadline[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5065/api/activity")
+    const apiBase = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065";
+    fetch(`${apiBase}/api/activity`)
       .then((res) => res.json())
       .then((data) => setActivities(data))
       .catch(() => {
@@ -58,7 +59,7 @@ export default function AdminDashboard() {
         ]);
       });
 
-    fetch("http://localhost:5065/api/deadlines")
+    fetch(`${apiBase}/api/deadlines`)
       .then((res) => res.json())
       .then((data) => setDeadlines(data))
       .catch(() => {

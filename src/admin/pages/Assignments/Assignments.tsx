@@ -1,7 +1,7 @@
 import "./Assignments.css";
 import { useEffect, useState, type FormEvent } from "react";
 
-const API_URL = "https://localhost:7161/api/Assignments";
+const API_URL = `${import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065"}/api/Assignments`;
 
 type Assignment = {
   id: number;

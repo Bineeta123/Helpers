@@ -1,0 +1,47 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: study-planner-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrongPassword123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+  backend:
+    image: study-planner-backend
+    container_name: study-planner-backend
+    build:
+      context: ./Backend/SmartStudyPlanner
+      dockerfile: Dockerfile
+    ports:
+      - "5065:8080"
+      - "7161:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=CrypticPassword123!
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/SmartStudyPlanner.pfx
+      - ConnectionStrings__DefaultConnection=Server=db;Database=StudyPlannerDb;User Id=sa;Password=YourStrongPassword123!;TrustServerCertificate=True;
+    volumes:
+      - ${USERPROFILE}/.aspnet/https:/https:ro
+    depends_on:
+      - db
+
+  frontend:
+    image: study-planner-frontend
+    container_name: study-planner-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=https://localhost:7161
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  mssql-data:
