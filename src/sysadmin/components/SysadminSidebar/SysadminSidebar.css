@@ -1,0 +1,108 @@
+.sysadmin-sidebar {
+  width: 260px;
+  background-color: #ffffff;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sysadmin-logo {
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sysadmin-logo h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #2563eb;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.sysadmin-logo p {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sysadmin-menu {
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sysadmin-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.sysadmin-menu-item:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.sysadmin-menu-item.active {
+  background-color: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.sysadmin-menu-item svg {
+  font-size: 1.2rem;
+  transition: transform 0.2s;
+}
+
+.sysadmin-menu-item:hover svg {
+  transform: scale(1.1);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1.5rem;
+  padding: 0.875rem;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #fca5a5;
+  color: #991b1b;
+}
+
+@media (max-width: 768px) {
+  .sysadmin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sysadmin-sidebar.open {
+    transform: translateX(0);
+  }
+}

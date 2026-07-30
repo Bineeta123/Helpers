@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartStudyPlanner.Models
 {
@@ -13,7 +13,16 @@ namespace SmartStudyPlanner.Models
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
+        public string RollNumber { get; set; } = string.Empty;
+
+        public string Semester { get; set; } = string.Empty;
+
+        public string Section { get; set; } = string.Empty;
+
         [Required]
         public string Status { get; set; } = "Active";
+
+        public int? ClassId { get; set; }
+        public Class? Class { get; set; }
     }
 }

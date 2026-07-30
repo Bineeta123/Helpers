@@ -87,13 +87,32 @@ namespace SmartStudyPlanner.Controllers
                 DueDate = request.DueDate,
                 CreatedById = userGuid,
                 FileName = originalFileName,
-                FilePath = uniqueFileName
+                FilePath = uniqueFileName,
+                ClassId = request.ClassId
             };
 
             _context.Assignments.Add(assignment);
             await _context.SaveChangesAsync();
 
             return Ok(assignment);
+        }
+
+        [HttpGet("my-classes")]
+        public async Task<IActionResult> GetMyClasses()
+        {
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email)) return Unauthorized("Invalid user session");
+
+            var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Email == email);
+            if (teacher == null) return NotFound("Teacher profile not found");
+
+            var classes = await _context.TeacherClasses
+                .Where(tc => tc.TeacherId == teacher.Id)
+                .Include(tc => tc.Class)
+                .Select(tc => tc.Class)
+                .ToListAsync();
+
+            return Ok(classes);
         }
 
 
@@ -114,7 +133,7 @@ namespace SmartStudyPlanner.Controllers
                 if (System.IO.File.Exists(filePath))
                 {
                     try
-                    {
+                     {
                         System.IO.File.Delete(filePath);
                     }
                     catch (Exception ex)
@@ -162,5 +181,7 @@ namespace SmartStudyPlanner.Controllers
         public DateTime DueDate { get; set; }
 
         public IFormFile? File { get; set; }
+
+        public int? ClassId { get; set; }
     }
 }

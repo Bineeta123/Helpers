@@ -11,11 +11,13 @@ import Settings from './pages/Settings/Settings'
 import RoleSelector from './components/RoleSelector'
 import StudentSignup from './components/StudentSignup'
 import AdminSignup from './components/AdminSignup'
+import SysadminSignup from './components/SysadminSignup'
 import SignIn from './components/SignIn'
 // import AdminDashboard from './components/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 import AdminApp from "./admin/AdminApp";
+import SysadminApp from "./sysadmin/SysadminApp";
 
 function HomeRedirect() {
   const { user } = useAuth()
@@ -24,6 +26,7 @@ function HomeRedirect() {
     return <Navigate to="/role-selector" replace />
   }
 
+  if (user.role === 'sysadmin') return <Navigate to="/sysadmin" replace />
   return <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />
 }
 
@@ -34,6 +37,7 @@ function App() {
       <Route path="/role-selector" element={<RoleSelector />} />
       <Route path="/student-signup" element={<StudentSignup />} />
       <Route path="/admin-signup" element={<AdminSignup />} />
+      <Route path="/sysadmin-signup" element={<SysadminSignup />} />
       <Route path="/signin" element={<SignIn />} />
       <Route
         path="/student"
@@ -48,6 +52,14 @@ function App() {
         element={
           <ProtectedRoute role="admin">
             <AdminApp />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sysadmin/*"
+        element={
+          <ProtectedRoute role="sysadmin">
+            <SysadminApp />
           </ProtectedRoute>
         }
       />

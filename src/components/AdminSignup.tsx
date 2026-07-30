@@ -18,7 +18,13 @@ export default function AdminSignup() {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/student', { replace: true })
+      if (user.role === 'sysadmin') {
+        navigate('/sysadmin', { replace: true })
+      } else if (user.role === 'admin') {
+        navigate('/admin', { replace: true })
+      } else {
+        navigate('/dashboard', { replace: true })
+      }
     }
   }, [navigate, user])
 

@@ -174,12 +174,18 @@ namespace SmartStudyPlanner.Controllers
         private static bool IsValidRole(string role)
         {
             return role.Equals("Student", StringComparison.OrdinalIgnoreCase) ||
-                   role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                   role.Equals("Admin", StringComparison.OrdinalIgnoreCase) ||
+                   role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsValidEmailForRole(string email, string role)
         {
             var lowerEmail = email.ToLowerInvariant();
+
+            if (role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                return true; // Sysadmin can use any email for now, e.g. admin@system.com
+            }
 
             if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
             {

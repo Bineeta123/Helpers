@@ -114,9 +114,36 @@ app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var context = services.GetRequiredService<ApplicationDbContext>();
 
-    string[] roles = { "Student", "Admin" };
+    int retries = 10;
+    while (retries > 0)
+    {
+        try
+        {
+            logger.LogInformation("Applying migrations...");
+            context.Database.Migrate();
+            logger.LogInformation("Migrations applied successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            retries--;
+            logger.LogWarning($"Failed to connect to database. Retrying in 5 seconds... ({retries} retries left). Error: {ex.Message}");
+            System.Threading.Thread.Sleep(5000);
+            if (retries == 0)
+            {
+                logger.LogError("Could not connect to database after several attempts. Exiting.");
+                throw;
+            }
+        }
+    }
+
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string[] roles = { "Student", "Admin", "Sysadmin" };
 
     foreach (var role in roles)
     {

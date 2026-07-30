@@ -1,74 +1,135 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { useTasks } from '../../context/TaskContext'
-import '../../App.css'
-import './Dashboard.css'
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useTasks } from '../../context/TaskContext';
+import '../../App.css';
+import './Dashboard.css';
 
-export default function Dashboard() 
-{
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { user } = useAuth()
-  const searchQuery = new URLSearchParams(location.search).get('search')?.trim() || ''
-  const { tasks } = useTasks()
+const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7161";
 
-  const pendingTasks = tasks.filter((task) => task.status === 'Pending')
+type ApiAssignmentItem = {
+  assignment: {
+    id: number;
+    title: string;
+    subject: string;
+    dueDate: string;
+    description?: string;
+  };
+  submission?: {
+    id: number;
+    status: string;
+  };
+};
+
+export default function Dashboard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+  const searchQuery = new URLSearchParams(location.search).get('search')?.trim() || '';
+  const { tasks: localTasks } = useTasks();
+
+  const [apiAssignments, setApiAssignments] = useState<ApiAssignmentItem[]>([]);
+
+  useEffect(() => {
+    const fetchApiAssignments = async () => {
+      try {
+        const token = localStorage.getItem("study-planner-token");
+        const response = await fetch(`${BASE_URL}/api/Submissions/student-assignments`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setApiAssignments(data);
+        }
+      } catch (err) {
+        console.error("Could not fetch API assignments", err);
+      }
+    };
+    fetchApiAssignments();
+  }, []);
+
+  // Determine if we use API data or fallback local tasks
+  const hasApiData = apiAssignments.length > 0;
+
+  // Process data lists
+  const pendingTasks = hasApiData
+    ? apiAssignments.filter(item => !item.submission).map(item => ({
+        id: `api-${item.assignment.id}`,
+        title: item.assignment.title,
+        note: item.assignment.subject,
+        due: new Date(item.assignment.dueDate).toLocaleDateString(),
+        status: 'Pending'
+      }))
+    : localTasks.filter((task) => task.status === 'Pending');
+
+  const allDisplayTasks = hasApiData
+    ? apiAssignments.map(item => ({
+        id: `api-${item.assignment.id}`,
+        title: item.assignment.title,
+        note: item.assignment.subject,
+        due: new Date(item.assignment.dueDate).toLocaleDateString(),
+        status: item.submission ? 'Completed' : 'Pending'
+      }))
+    : localTasks;
+
   const matchedTasks = searchQuery
-    ? tasks.filter((task) =>
+    ? allDisplayTasks.filter((task) =>
         [task.title, task.note, task.due]
           .join(' ')
           .toLowerCase()
-          .includes(searchQuery.toLowerCase()),
+          .includes(searchQuery.toLowerCase())
       )
-    : []
+    : [];
 
   const focusTask = searchQuery
-    ? matchedTasks[0] ?? pendingTasks[0] ?? tasks[0]
-    : pendingTasks[0] ?? tasks[0]
+    ? matchedTasks[0] ?? pendingTasks[0] ?? allDisplayTasks[0]
+    : pendingTasks[0] ?? allDisplayTasks[0];
 
-  const deadlineTasks = searchQuery ? matchedTasks.slice(0, 3) : tasks.slice(0, 3)
-  const assignmentTasks = searchQuery ? matchedTasks.slice(0, 2) : tasks.slice(0, 2)
-  const activeDeadlines = deadlineTasks.length ? deadlineTasks : tasks.slice(0, 3)
-  const activeAssignments = assignmentTasks.length ? assignmentTasks : tasks.slice(0, 2)
+  const deadlineTasks = searchQuery ? matchedTasks.slice(0, 3) : allDisplayTasks.slice(0, 3);
+  const assignmentTasks = searchQuery ? matchedTasks.slice(0, 2) : allDisplayTasks.slice(0, 2);
+  const activeDeadlines = deadlineTasks.length ? deadlineTasks : allDisplayTasks.slice(0, 3);
+  const activeAssignments = assignmentTasks.length ? assignmentTasks : allDisplayTasks.slice(0, 2);
 
   const handleStartSession = () => {
-    window.alert('Session started. Good luck!')
-  }
+    window.alert('Session started. Good luck!');
+  };
 
   const handleReschedule = () => {
-    navigate('/schedule')
-  }
+    navigate('/schedule');
+  };
 
   const handleViewAllDeadlines = () => {
-    navigate('/assignments')
-  }
+    navigate('/assignments');
+  };
 
   const handleDeadlineClick = (item: string) => {
-    window.alert(`Opening deadline details for ${item}.`)
-    navigate('/assignments')
-  }
+    window.alert(`Opening deadline details for ${item}.`);
+    navigate('/assignments');
+  };
 
   const handleStartMockTest = () => {
-    window.alert('Starting mock test session now.')
-    navigate('/analytics')
-  }
+    window.alert('Starting mock test session now.');
+    navigate('/analytics');
+  };
 
-  const totalDeadlines = activeDeadlines.length
-  const totalPending = pendingTasks.length
-  const focusDue = focusTask.due || 'No due date'
-  const focusSubtitle = focusTask.note || `Due ${focusDue}`
-  const hasSearchResults = searchQuery ? matchedTasks.length > 0 : true
+  const totalDeadlines = activeDeadlines.length;
+  const totalPending = pendingTasks.length;
+  
+  const focusDue = focusTask ? focusTask.due : 'No due date';
+  const focusSubtitle = focusTask ? (focusTask.note || `Due ${focusDue}`) : 'All clear!';
   const displayName = (() => {
-    const rawName = user?.name || user?.email || 'student'
-    const localPart = rawName.split('@')[0]
-    const firstSegment = localPart.split('.')[0] || localPart
-    return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1)
-  })()
+    const rawName = user?.name || user?.email || 'student';
+    const localPart = rawName.split('@')[0];
+    const firstSegment = localPart.split('.')[0] || localPart;
+    return firstSegment.charAt(0).toUpperCase() + firstSegment.slice(1);
+  })();
 
   const formatDueLabel = (due: string) => {
-    if (!due) return 'TBA'
-    return due.toUpperCase().slice(0, 8)
-  }
+    if (!due) return 'TBA';
+    return due.toUpperCase().slice(0, 8);
+  };
 
   return (
     <section className="dashboard-page">
@@ -82,7 +143,7 @@ export default function Dashboard()
 
       {searchQuery ? (
         <div className="search-result-banner">
-          {hasSearchResults ? (
+          {hasApiData ? (
             <>Showing search results for <strong>“{searchQuery}”</strong></>
           ) : (
             <>No results found for <strong>“{searchQuery}”</strong>. Showing nearest tasks.</>
@@ -90,64 +151,71 @@ export default function Dashboard()
         </div>
       ) : null}
 
-      <section className="dashboard-grid">
-        <div className="dashboard-hero">
-          <div className="hero-header">
-            <span className="hero-badge">TODAY’S FOCUS</span>
-            <span className="hero-priority">{focusTask.status === 'Pending' ? 'Priority: High' : 'Priority: Normal'}</span>
-          </div>
-          <h2>{focusTask.title}</h2>
-          <p>{focusSubtitle}</p>
-          <div className="hero-stats">
-            <div className="hero-stat">Due: {focusDue}</div>
-            <div className="hero-stat">Status: {focusTask.status}</div>
-            <div className="hero-stat">Pending tasks: {totalPending}</div>
-          </div>
-          <div className="hero-actions">
-            <button className="btn-primary" type="button" onClick={handleStartSession}>
-              Start Session
-            </button>
-            <button className="btn-secondary" type="button" onClick={handleReschedule}>
-              Reschedule
-            </button>
-          </div>
-        </div>
-
-        <aside className="dashboard-side">
-          <div className="card card-deadlines">
-            <div className="card-header">
-              <span>Deadlines</span>
-              <button type="button" className="link-button" onClick={handleViewAllDeadlines}>
-                View All
+      {focusTask ? (
+        <section className="dashboard-grid">
+          <div className="dashboard-hero">
+            <div className="hero-header">
+              <span className="hero-badge">TODAY’S FOCUS</span>
+              <span className="hero-priority">{focusTask.status === 'Pending' ? 'Priority: High' : 'Priority: Normal'}</span>
+            </div>
+            <h2>{focusTask.title}</h2>
+            <p>{focusSubtitle}</p>
+            <div className="hero-stats">
+              <div className="hero-stat">Due: {focusDue}</div>
+              <div className="hero-stat">Status: {focusTask.status}</div>
+              <div className="hero-stat">Pending tasks: {totalPending}</div>
+            </div>
+            <div className="hero-actions">
+              <button className="btn-primary" type="button" onClick={handleStartSession}>
+                Start Session
+              </button>
+              <button className="btn-secondary" type="button" onClick={handleReschedule}>
+                Reschedule
               </button>
             </div>
-            {activeDeadlines.map((task) => (
-              <button
-                key={task.id}
-                type="button"
-                className="deadline-item"
-                onClick={() => handleDeadlineClick(task.title)}
-              >
-                <div className="deadline-date">{formatDueLabel(task.due)}</div>
-                <div>
-                  <div className="deadline-title">{task.title}</div>
-                  <div className="deadline-subtitle">{task.note}</div>
-                </div>
-              </button>
-            ))}
           </div>
-        </aside>
-      </section>
+
+          <aside className="dashboard-side">
+            <div className="card card-deadlines">
+              <div className="card-header">
+                <span>Deadlines</span>
+                <button type="button" className="link-button" onClick={handleViewAllDeadlines}>
+                  View All
+                </button>
+              </div>
+              {activeDeadlines.map((task) => (
+                <button
+                  key={task.id}
+                  type="button"
+                  className="deadline-item"
+                  onClick={() => handleDeadlineClick(task.title)}
+                >
+                  <div className="deadline-date">{formatDueLabel(task.due)}</div>
+                  <div>
+                    <div className="deadline-title">{task.title}</div>
+                    <div className="deadline-subtitle">{task.note}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </aside>
+        </section>
+      ) : (
+        <div className="card card-white" style={{ padding: "3rem", textAlign: "center", color: "#64748b" }}>
+          <h3>All caught up!</h3>
+          <p>No active assignments or tasks found. Relax or add a task to get started.</p>
+        </div>
+      )}
 
       <section className="dashboard-card-row">
         <div className="card card-white card-summary">
           <div className="card-title">Assignments</div>
-          <div className="card-subtitle">{tasks.length} active items</div>
+          <div className="card-subtitle">{allDisplayTasks.length} active items</div>
           {activeAssignments.map((task) => (
             <div className="assignment-item" key={task.id}>
               <span className="assignment-name">{task.title}</span>
               <span className={`assignment-status ${task.status === 'Pending' ? 'pending' : 'completed'}`}>
-                {task.note}
+                {task.status}
               </span>
             </div>
           ))}
@@ -190,30 +258,26 @@ export default function Dashboard()
           <span>SUBJECT</span>
           <span>TASK</span>
           <span>STATUS</span>
-          <span>ACTION</span>
         </div>
         <div className="activity-row">
           <span>Today, 9:30 AM</span>
           <span>Network programming</span>
           <span>Completed Quiz #3</span>
           <span className="status completed">Completed</span>
-          <span>•••</span>
         </div>
         <div className="activity-row">
           <span>Yesterday</span>
           <span>Artificial Intelligence</span>
           <span>Read Chapter 5 Notes</span>
           <span className="status completed">Completed</span>
-          <span>•••</span>
         </div>
         <div className="activity-row">
           <span>Yesterday</span>
           <span>Software Dependability</span>
           <span>Practice Session</span>
           <span className="status pending">Pending</span>
-          <span>•••</span>
         </div>
       </div>
     </section>
-  )
+  );
 }

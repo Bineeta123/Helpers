@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-export type UserRole = 'admin' | 'student'
+export type UserRole = 'sysadmin' | 'admin' | 'student'
 export type User = {
   email: string
   role: UserRole
@@ -33,6 +33,9 @@ const API_BASE_URL = (
 ).replace(/\/$/, '')
 
 const normalizeRole = (role?: string): UserRole => {
+  if (role?.toLowerCase() === 'sysadmin') {
+    return 'sysadmin'
+  }
   if (role?.toLowerCase() === 'admin') {
     return 'admin'
   }
@@ -112,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
         confirmPassword: password,
-        role: role === 'admin' ? 'Admin' : 'Student',
+        role: role === 'sysadmin' ? 'Sysadmin' : (role === 'admin' ? 'Admin' : 'Student'),
       }),
     })
 

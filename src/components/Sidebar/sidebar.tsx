@@ -32,8 +32,8 @@ export default function Sidebar(): React.ReactElement {
   }
 
   const handleLogout = () => {
-   logout()
-    navigate('/login')
+    logout()
+    navigate('/signin')
   }
 
   // const handleHelpSupport = () => {
