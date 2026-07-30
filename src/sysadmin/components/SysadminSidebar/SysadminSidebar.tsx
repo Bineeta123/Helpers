@@ -8,7 +8,6 @@ import {
   FiFolder,
   FiSettings,
   FiLogOut,
-  FiCalendar,
   FiCheckSquare
 } from "react-icons/fi";
 import { FaChalkboardTeacher } from "react-icons/fa";
@@ -20,7 +19,6 @@ const menuItems = [
   { title: "Classes", icon: <FiBookOpen />, path: "classes" },
   { title: "Authorized Users", icon: <FiFolder />, path: "authorized-users" },
   { title: "Registrations", icon: <FiCheckSquare />, path: "registrations" },
-  { title: "Academic Years", icon: <FiCalendar />, path: "academic-years" },
   { title: "Settings", icon: <FiSettings />, path: "settings" },
 ];
 

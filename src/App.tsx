@@ -8,6 +8,7 @@ import NewTask from './pages/NewTask/NewTask'
 import ResourceCenter from './pages/ResourceCenter/ResourceCenter'
 import Analytics from './pages/Analytics/Analytics'
 import Settings from './pages/Settings/Settings'
+import SubjectDetails from './pages/SubjectDetails/SubjectDetails'
 import RoleSelector from './components/RoleSelector'
 import StudentSignup from './components/StudentSignup'
 import AdminSignup from './components/AdminSignup'
@@ -77,6 +78,7 @@ function App() {
         <Route path="/resource-center" element={<ResourceCenter />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/subject/:subjectName" element={<SubjectDetails />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

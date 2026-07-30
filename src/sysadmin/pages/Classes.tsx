@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
-import { ClassesService, TeachersService, StudentsService, AcademicYearsService } from "../api/adminApi";
-import { FiPlus, FiTrash2, FiUserPlus, FiUserMinus, FiAlertTriangle, FiBookOpen, FiMapPin, FiCalendar, FiUsers } from "react-icons/fi";
+import { ClassesService, TeachersService, StudentsService } from "../api/adminApi";
+import { FiPlus, FiTrash2, FiUserPlus, FiUserMinus, FiAlertTriangle, FiBookOpen, FiMapPin, FiUsers } from "react-icons/fi";
 import { FaChalkboardTeacher } from "react-icons/fa";
 
 export default function Classes() {
   const [classes, setClasses] = useState<any[]>([]);
   const [teachers, setTeachers] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
-  const [academicYears, setAcademicYears] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [selectedClass, setSelectedClass] = useState<any | null>(null);
-  const [form, setForm] = useState({ className: "", semester: "", section: "", roomNumber: "", academicYearId: "" });
+  const [form, setForm] = useState({ className: "", semester: "", section: "", roomNumber: "" });
   const [assignTeacherId, setAssignTeacherId] = useState("");
   const [enrollStudentId, setEnrollStudentId] = useState("");
 
@@ -21,24 +20,14 @@ export default function Classes() {
 
   const fetchInitialData = async () => {
     try {
-      const [clsRes, teachRes, studRes, yrRes] = await Promise.all([
+      const [clsRes, teachRes, studRes] = await Promise.all([
         ClassesService.getAll(),
         TeachersService.getAll(),
-        StudentsService.getAll(),
-        AcademicYearsService.getAll()
+        StudentsService.getAll()
       ]);
       setClasses(clsRes.data);
       setTeachers(teachRes.data);
       setStudents(studRes.data);
-      setAcademicYears(yrRes.data);
-      
-      // Select the first active academic year by default if form is empty
-      const activeYear = yrRes.data.find((y: any) => y.isActive);
-      if (activeYear) {
-        setForm(prev => ({ ...prev, academicYearId: activeYear.id.toString() }));
-      } else if (yrRes.data.length > 0) {
-        setForm(prev => ({ ...prev, academicYearId: yrRes.data[0].id.toString() }));
-      }
     } catch (error) {
       console.error("Error fetching class management data:", error);
     } finally {
@@ -61,17 +50,9 @@ export default function Classes() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.academicYearId) {
-      alert("Please select or create an Academic Year first.");
-      return;
-    }
     try {
-      const payload = {
-        ...form,
-        academicYearId: parseInt(form.academicYearId)
-      };
-      await ClassesService.create(payload);
-      setForm(prev => ({ ...prev, className: "", semester: "", section: "", roomNumber: "" }));
+      await ClassesService.create(form);
+      setForm({ className: "", semester: "", section: "", roomNumber: "" });
       fetchClasses();
     } catch (error) {
       console.error(error);
@@ -155,7 +136,7 @@ export default function Classes() {
   const assignedTeacherIds = selectedClass
     ? selectedClass.teacherClasses.map((tc: any) => tc.teacherId)
     : [];
-  
+
   const availableTeachers = teachers.filter(
     (t: any) => t.status === "Active" && !assignedTeacherIds.includes(t.id)
   );
@@ -164,9 +145,26 @@ export default function Classes() {
     ? selectedClass.students.map((s: any) => s.id)
     : [];
 
-  const availableStudents = students.filter(
-    (s: any) => s.status === "Active" && !enrolledStudentIds.includes(s.id)
-  );
+  const availableStudents = students.filter((s: any) => {
+    if (s.status !== "Active" || enrolledStudentIds.includes(s.id)) {
+      return false;
+    }
+    if (!selectedClass || !selectedClass.semester) return true;
+
+    const classSem = selectedClass.semester.toLowerCase();
+    const studSem = (s.semester || "").toLowerCase();
+
+    const classNumMatch = classSem.match(/\d+/);
+    const studNumMatch = studSem.match(/\d+/);
+    const semMatches = classSem.includes(studSem) || studSem.includes(classSem) ||
+                       (classNumMatch && studNumMatch && classNumMatch[0] === studNumMatch[0]);
+
+    const classSec = (selectedClass.section || "").toLowerCase().trim();
+    const studSec = (s.section || "").toLowerCase().trim();
+    const secMatches = !classSec || !studSec || classSec === studSec;
+
+    return semMatches && secMatches;
+  });
 
   return (
     <div>
@@ -175,25 +173,17 @@ export default function Classes() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "2rem", alignItems: "start" }}>
-        
+
         {/* Classes List & Creation */}
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-          
+
           <div className="sysadmin-card">
             <h3>Create New Class</h3>
             <form onSubmit={handleSubmit} style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "1rem" }}>
-              <input required placeholder="Class Name (e.g. CS101)" value={form.className} onChange={e => setForm({...form, className: e.target.value})} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", flex: 1, minWidth: "150px" }} />
-              <input required placeholder="Semester (e.g. Semester 1)" value={form.semester} onChange={e => setForm({...form, semester: e.target.value})} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", flex: 1, minWidth: "150px" }} />
-              <input placeholder="Section (e.g. A)" value={form.section} onChange={e => setForm({...form, section: e.target.value})} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", width: "100px" }} />
-              <input placeholder="Room Number" value={form.roomNumber} onChange={e => setForm({...form, roomNumber: e.target.value})} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", width: "120px" }} />
-              
-              <select required value={form.academicYearId} onChange={e => setForm({...form, academicYearId: e.target.value})} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", minWidth: "150px" }}>
-                <option value="">Select Academic Year</option>
-                {academicYears.map((y: any) => (
-                  <option key={y.id} value={y.id}>{y.year} {y.isActive ? "(Active)" : ""}</option>
-                ))}
-              </select>
-
+              <input required placeholder="Class Name (e.g. CS101)" value={form.className} onChange={e => setForm({ ...form, className: e.target.value })} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", flex: 1, minWidth: "150px" }} />
+              <input required placeholder="Semester (e.g. Semester 1)" value={form.semester} onChange={e => setForm({ ...form, semester: e.target.value })} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", flex: 1, minWidth: "150px" }} />
+              <input placeholder="Section (e.g. A)" value={form.section} onChange={e => setForm({ ...form, section: e.target.value })} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", width: "100px" }} />
+              <input placeholder="Room Number" value={form.roomNumber} onChange={e => setForm({ ...form, roomNumber: e.target.value })} style={{ padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", width: "120px" }} />
               <button type="submit" className="sysadmin-btn-primary"><FiPlus /> Create Class</button>
             </form>
           </div>
@@ -204,17 +194,17 @@ export default function Classes() {
               {classes.map(c => {
                 const isSelected = selectedClass?.id === c.id;
                 return (
-                  <div 
-                    key={c.id} 
+                  <div
+                    key={c.id}
                     onClick={() => setSelectedClass(c)}
-                    style={{ 
-                      display: "flex", 
-                      justifyContent: "between", 
-                      alignItems: "center", 
-                      padding: "1rem", 
-                      borderRadius: "10px", 
-                      border: isSelected ? "2px solid #2563eb" : "1px solid #e2e8f0", 
-                      background: isSelected ? "#eff6ff" : "white", 
+                    style={{
+                      display: "flex",
+                      justifyContent: "between",
+                      alignItems: "center",
+                      padding: "1rem",
+                      borderRadius: "10px",
+                      border: isSelected ? "2px solid #2563eb" : "1px solid #e2e8f0",
+                      background: isSelected ? "#eff6ff" : "white",
                       cursor: "pointer",
                       transition: "all 0.2s"
                     }}
@@ -228,18 +218,17 @@ export default function Classes() {
                       </div>
                       <div style={{ display: "flex", gap: "1rem", marginTop: "0.4rem", fontSize: "0.85rem", color: "#64748b" }}>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><FiMapPin /> Room {c.roomNumber || "N/A"}</span>
-                        <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><FiCalendar /> {c.academicYear?.year || "N/A"}</span>
                       </div>
                       <div style={{ display: "flex", gap: "1rem", marginTop: "0.4rem", fontSize: "0.85rem", color: "#64748b" }}>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><FaChalkboardTeacher /> {c.teacherClasses?.length || 0} Teachers</span>
                         <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}><FiUsers /> {c.students?.length || 0} Students</span>
                       </div>
                     </div>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(c.id);
-                      }} 
+                      }}
                       style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "0.5rem" }}
                     >
                       <FiTrash2 size={18} />
@@ -268,13 +257,13 @@ export default function Classes() {
               {/* Assign Teachers Section */}
               <div style={{ marginBottom: "2rem" }}>
                 <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><FaChalkboardTeacher /> Assigned Teachers</h3>
-                
+
                 {/* Form to assign a new teacher */}
                 <form onSubmit={handleAssignTeacher} style={{ display: "flex", gap: "0.5rem", margin: "1rem 0" }}>
-                  <select 
-                    required 
-                    value={assignTeacherId} 
-                    onChange={e => setAssignTeacherId(e.target.value)} 
+                  <select
+                    required
+                    value={assignTeacherId}
+                    onChange={e => setAssignTeacherId(e.target.value)}
                     style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                   >
                     <option value="">Choose Teacher to Assign...</option>
@@ -295,9 +284,9 @@ export default function Classes() {
                         <span style={{ fontWeight: 600, color: "#334155" }}>{tc.teacher.name}</span>
                         <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "0.5rem" }}>({tc.teacher.designation || "Faculty"})</span>
                       </div>
-                      <button 
-                        type="button" 
-                        onClick={() => handleRemoveTeacher(tc.teacherId)} 
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveTeacher(tc.teacherId)}
                         style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}
                       >
                         <FiUserMinus size={16} />
@@ -313,13 +302,13 @@ export default function Classes() {
               {/* Enroll Students Section */}
               <div>
                 <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><FiUsers /> Enrolled Students</h3>
-                
+
                 {/* Form to enroll a new student */}
                 <form onSubmit={handleEnrollStudent} style={{ display: "flex", gap: "0.5rem", margin: "1rem 0" }}>
-                  <select 
-                    required 
-                    value={enrollStudentId} 
-                    onChange={e => setEnrollStudentId(e.target.value)} 
+                  <select
+                    required
+                    value={enrollStudentId}
+                    onChange={e => setEnrollStudentId(e.target.value)}
                     style={{ flex: 1, padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                   >
                     <option value="">Choose Student to Enroll...</option>
@@ -336,20 +325,20 @@ export default function Classes() {
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {selectedClass.students.map((s: any) => {
                     // Check whether student is correct for that subject/semester
-                    const isSemesterMismatch = s.semester && selectedClass.semester && 
+                    const isSemesterMismatch = s.semester && selectedClass.semester &&
                       !selectedClass.semester.toLowerCase().includes(s.semester.toLowerCase()) &&
                       !s.semester.toLowerCase().includes(selectedClass.semester.toLowerCase());
-                    
+
                     return (
-                      <div 
-                        key={s.id} 
-                        style={{ 
-                          display: "flex", 
-                          flexDirection: "column", 
-                          padding: "0.75rem", 
-                          background: "#f8fafc", 
-                          borderRadius: "8px", 
-                          border: isSemesterMismatch ? "1px solid #fca5a5" : "1px solid #e2e8f0" 
+                      <div
+                        key={s.id}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          padding: "0.75rem",
+                          background: "#f8fafc",
+                          borderRadius: "8px",
+                          border: isSemesterMismatch ? "1px solid #fca5a5" : "1px solid #e2e8f0"
                         }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -357,9 +346,9 @@ export default function Classes() {
                             <span style={{ fontWeight: 600, color: "#334155" }}>{s.name}</span>
                             <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "0.5rem" }}>({s.rollNumber || "No Roll No"})</span>
                           </div>
-                          <button 
-                            type="button" 
-                            onClick={() => handleUnenrollStudent(s.id)} 
+                          <button
+                            type="button"
+                            onClick={() => handleUnenrollStudent(s.id)}
                             style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center" }}
                           >
                             <FiUserMinus size={16} />

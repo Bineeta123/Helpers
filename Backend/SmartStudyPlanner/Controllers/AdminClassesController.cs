@@ -47,6 +47,18 @@ namespace SmartStudyPlanner.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            if (model.AcademicYearId == 0)
+            {
+                var defaultYear = await _context.AcademicYears.FirstOrDefaultAsync(y => y.Year == "Default");
+                if (defaultYear == null)
+                {
+                    defaultYear = new AcademicYear { Year = "Default", IsActive = true };
+                    _context.AcademicYears.Add(defaultYear);
+                    await _context.SaveChangesAsync();
+                }
+                model.AcademicYearId = defaultYear.Id;
+            }
+
             _context.Classes.Add(model);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);

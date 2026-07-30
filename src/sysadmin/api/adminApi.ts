@@ -58,17 +58,11 @@ export const AuthorizedUsersService = {
     delete: (id: number) => adminApi.delete(`/AuthorizedUsers/${id}`),
 };
 
+
 export const RegistrationsService = {
     getRequests: () => adminApi.get('/Registration/requests'),
     approve: (id: number) => adminApi.post(`/Registration/approve/${id}`),
     reject: (id: number) => adminApi.post(`/Registration/reject/${id}`),
-};
-
-export const AcademicYearsService = {
-    getAll: () => adminApi.get('/AcademicYears'),
-    create: (data: any) => adminApi.post('/AcademicYears', data),
-    delete: (id: number) => adminApi.delete(`/AcademicYears/${id}`),
-    setActive: (id: number) => adminApi.put(`/AcademicYears/${id}/set-active`),
 };
 
 export default adminApi;

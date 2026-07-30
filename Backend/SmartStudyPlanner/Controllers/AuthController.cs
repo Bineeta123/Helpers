@@ -84,28 +84,37 @@ namespace SmartStudyPlanner.Controllers
 
             await _userManager.AddToRoleAsync(user, request.Role);
 
-            if (request.Role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            string authUserRole = request.Role;
+            if (request.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                var studentExists = await _context.Students
-                    .AnyAsync(student => student.Email == request.Email);
-
-                if (!studentExists)
-                {
-                    var student = new Student
-                    {
-                        Name = request.Email.Split('@')[0],
-                        Email = request.Email,
-                        Status = "Active"
-                    };
-
-                    _context.Students.Add(student);
-                    await _context.SaveChangesAsync();
-                }
+                authUserRole = "Teacher";
             }
+
+            var authorizedUser = new AuthorizedUser
+            {
+                Name = string.IsNullOrWhiteSpace(request.Name) ? request.Email.Split('@')[0] : request.Name,
+                Email = request.Email,
+                Role = authUserRole,
+                Semester = request.Semester,
+                Section = request.Section,
+                Status = "Pending Registration"
+            };
+
+            _context.AuthorizedUsers.Add(authorizedUser);
+            await _context.SaveChangesAsync();
+
+            var regRequest = new RegistrationRequest
+            {
+                AuthorizedUserId = authorizedUser.Id,
+                Status = "Pending"
+            };
+
+            _context.RegistrationRequests.Add(regRequest);
+            await _context.SaveChangesAsync();
 
             return Ok(new
             {
-                message = "User registered successfully.",
+                message = "Your registration request has been submitted for admin approval.",
                 role = request.Role
             });
         }
@@ -132,6 +141,15 @@ namespace SmartStudyPlanner.Controllers
 
             var roles = await _userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault() ?? "Student";
+
+            if (!role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                var authUser = await _context.AuthorizedUsers.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (authUser == null || !authUser.Status.Equals("Active", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Unauthorized("Your account is pending admin approval or you are not authorized to access the system.");
+                }
+            }
 
             var token = CreateToken(user, roles);
 

@@ -11,7 +11,7 @@ export type User = {
 type AuthContextType = {
   user: User | null
   login: (email: string, password: string) => Promise<void>
-  signup: (email: string, password: string, role: UserRole) => Promise<void>
+  signup: (email: string, password: string, role: UserRole, extra?: { name?: string; semester?: string; section?: string }) => Promise<void>
   logout: () => void
 }
 
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(authUser)
   }
 
-  const signup = async (email: string, password: string, role: UserRole) => {
+  const signup = async (email: string, password: string, role: UserRole, extra?: { name?: string; semester?: string; section?: string }) => {
     const response = await fetch(`${API_BASE_URL}/api/Auth/register`, {
       method: 'POST',
       headers: {
@@ -116,6 +116,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         confirmPassword: password,
         role: role === 'sysadmin' ? 'Sysadmin' : (role === 'admin' ? 'Admin' : 'Student'),
+        name: extra?.name || '',
+        semester: extra?.semester || '',
+        section: extra?.section || '',
       }),
     })
 
@@ -127,18 +130,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!response.ok) {
       throw new Error(message)
     }
-
-    const authUser: User = {
-      email,
-      role,
-      name: email,
-    }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser))
-    if (data.token) {
-      localStorage.setItem(TOKEN_KEY, data.token)
-    }
-    setUser(authUser)
   }
 
   const logout = () => {

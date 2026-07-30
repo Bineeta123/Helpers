@@ -6,7 +6,6 @@ import Students from "./pages/Students";
 import Classes from "./pages/Classes";
 import AuthorizedUsers from "./pages/AuthorizedUsers";
 import Registrations from "./pages/Registrations";
-import AcademicYears from "./pages/AcademicYears";
 import Settings from "./pages/Settings";
 
 export default function SysadminApp() {
@@ -19,7 +18,6 @@ export default function SysadminApp() {
         <Route path="classes" element={<Classes />} />
         <Route path="authorized-users" element={<AuthorizedUsers />} />
         <Route path="registrations" element={<Registrations />} />
-        <Route path="academic-years" element={<AcademicYears />} />
         <Route path="settings" element={<Settings />} />
       </Route>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminDashboardService } from "../api/adminApi";
-import { FiUsers, FiBookOpen, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import { FiUsers, FiBookOpen, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { FaChalkboardTeacher } from "react-icons/fa";
 
 export default function Dashboard() {
@@ -62,15 +62,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="sysadmin-card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{ padding: "1rem", backgroundColor: "#ffedd5", color: "#ea580c", borderRadius: "12px" }}>
-            <FiClock size={24} />
-          </div>
-          <div>
-            <h3 style={{ margin: 0, fontSize: "2rem", color: "#1e293b" }}>{stats?.pendingRegistrations || 0}</h3>
-            <p style={{ margin: 0, color: "#64748b", fontWeight: 500 }}>Pending Reg.</p>
-          </div>
-        </div>
 
         <div className="sysadmin-card" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <div style={{ padding: "1rem", backgroundColor: "#cffafe", color: "#0891b2", borderRadius: "12px" }}>

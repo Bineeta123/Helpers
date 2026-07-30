@@ -11,6 +11,7 @@ export default function AdminSignup() {
   const navigate = useNavigate()
   const { user, signup } = useAuth()
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -84,10 +85,9 @@ export default function AdminSignup() {
 
     setLoading(true)
     try {
-      await signup(email.trim(), password, 'admin')
-      // Note: In production, this should show a pending approval message
-      // For now, redirecting to admin dashboard
-      navigate('/admin')
+      await signup(email.trim(), password, 'admin', { name: name.trim() })
+      alert('Your registration request has been submitted for admin approval. Please wait until approved before logging in.')
+      navigate('/signin')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed. Try again.')
     } finally {
@@ -105,6 +105,17 @@ export default function AdminSignup() {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <label>
+            Full Name
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Enter your full name"
+              required
+            />
+          </label>
+
+          <label style={{ marginTop: '1rem' }}>
             Email
             <input
               type="email"

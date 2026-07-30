@@ -15,7 +15,7 @@ namespace SmartStudyPlanner.Models
         public string Section { get; set; } = string.Empty;
 
         public int AcademicYearId { get; set; }
-        public AcademicYear AcademicYear { get; set; } = null!;
+        public AcademicYear? AcademicYear { get; set; }
 
         public string RoomNumber { get; set; } = string.Empty;
 
