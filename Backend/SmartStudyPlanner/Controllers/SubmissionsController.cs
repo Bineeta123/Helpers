@@ -40,6 +40,22 @@ namespace SmartStudyPlanner.Controllers
             return Ok(submissions);
         }
 
+        // Get the logged-in student's profile including class
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetStudentProfile()
+        {
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email)) return Unauthorized("Invalid user session");
+
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Email == email);
+
+            if (student == null) return NotFound("Student profile not found");
+
+            return Ok(student);
+        }
+
         // Get student's class assignments along with their submission status
         [HttpGet("student-assignments")]
         public async Task<IActionResult> GetStudentAssignments()
@@ -47,17 +63,21 @@ namespace SmartStudyPlanner.Controllers
             var email = User.Identity?.Name;
             if (string.IsNullOrEmpty(email)) return Unauthorized("Invalid user session");
 
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Email == email);
             if (student == null) return NotFound("Student profile not found");
 
-            if (student.ClassId == null)
+            var classIds = student.Classes.Select(c => c.Id).ToList();
+            if (!classIds.Any())
             {
                 return Ok(new object[] { });
             }
 
-            // Find all assignments published to this class
+            // Find all assignments published to these classes
             var assignments = await _context.Assignments
-                .Where(a => a.ClassId == student.ClassId)
+                .Include(a => a.Class)
+                .Where(a => classIds.Contains(a.ClassId ?? 0))
                 .OrderBy(a => a.DueDate)
                 .ToListAsync();
 

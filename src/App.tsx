@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 import MainLayout from './layout/MainLayout'
 import Dashboard from './pages/Dashboard/Dashboard'
-import Schedule from './pages/Schedule/Schedule'
 import Assignments from './pages/Assignments/Assignments'
 import NewTask from './pages/NewTask/NewTask'
 import ResourceCenter from './pages/ResourceCenter/ResourceCenter'
@@ -13,6 +12,7 @@ import RoleSelector from './components/RoleSelector'
 import StudentSignup from './components/StudentSignup'
 import AdminSignup from './components/AdminSignup'
 import SysadminSignup from './components/SysadminSignup'
+import SetupPage from './components/SetupPage'
 import SignIn from './components/SignIn'
 // import AdminDashboard from './components/AdminDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -39,6 +39,7 @@ function App() {
       <Route path="/student-signup" element={<StudentSignup />} />
       <Route path="/admin-signup" element={<AdminSignup />} />
       <Route path="/sysadmin-signup" element={<SysadminSignup />} />
+      <Route path="/setup" element={<SetupPage />} />
       <Route path="/signin" element={<SignIn />} />
       <Route
         path="/student"
@@ -72,7 +73,6 @@ function App() {
         }
       >
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/schedule" element={<Schedule />} />
         <Route path="/assignments" element={<Assignments />} />
         <Route path="/new-task" element={<NewTask />} />
         <Route path="/resource-center" element={<ResourceCenter />} />

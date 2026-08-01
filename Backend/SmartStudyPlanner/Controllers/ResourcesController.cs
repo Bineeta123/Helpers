@@ -89,16 +89,20 @@ namespace SmartStudyPlanner.Controllers
             var email = User.Identity?.Name;
             if (string.IsNullOrEmpty(email)) return Unauthorized("Invalid user session");
 
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Email == email);
             if (student == null) return NotFound("Student profile not found");
 
-            if (student.ClassId == null)
+            var classIds = student.Classes.Select(c => c.Id).ToList();
+            if (!classIds.Any())
             {
                 return Ok(new object[] { });
             }
 
             var resources = await _context.Resources
-                .Where(r => r.ClassId == student.ClassId)
+                .Include(r => r.Class)
+                .Where(r => classIds.Contains(r.ClassId ?? 0))
                 .ToListAsync();
 
             return Ok(resources);

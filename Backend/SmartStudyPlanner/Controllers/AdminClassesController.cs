@@ -123,22 +123,74 @@ namespace SmartStudyPlanner.Controllers
         [HttpPost("{classId}/enroll-student/{studentId}")]
         public async Task<IActionResult> EnrollStudent(int classId, int studentId)
         {
-            var student = await _context.Students.FindAsync(studentId);
+            var cls = await _context.Classes.FindAsync(classId);
+            if (cls == null) return NotFound("Class not found");
+
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Id == studentId);
             if (student == null) return NotFound("Student not found");
 
-            student.ClassId = classId;
+            if (student.Status != "Active") return BadRequest("Student is not active.");
+
+            // Check if already enrolled in this class
+            if (student.Classes.Any(c => c.Id == classId))
+            {
+                return BadRequest("Student is already enrolled in this class.");
+            }
+
+            // Check section and semester matching criteria
+            // Semester match logic:
+            if (!string.IsNullOrEmpty(cls.Semester) && !string.IsNullOrEmpty(student.Semester))
+            {
+                var classSem = cls.Semester.ToLowerInvariant();
+                var studSem = student.Semester.ToLowerInvariant();
+
+                // Check numeric digit match in semester, e.g. "Semester 1" and "1" or "1st"
+                var classNum = new string(classSem.Where(char.IsDigit).ToArray());
+                var studNum = new string(studSem.Where(char.IsDigit).ToArray());
+
+                bool semMatches = classSem.Contains(studSem) || studSem.Contains(classSem) ||
+                                  (!string.IsNullOrEmpty(classNum) && !string.IsNullOrEmpty(studNum) && classNum == studNum);
+
+                if (!semMatches)
+                {
+                    return BadRequest($"Semester mismatch: Student semester ({student.Semester}) does not match class semester ({cls.Semester}).");
+                }
+            }
+
+            // Section match logic:
+            if (!string.IsNullOrEmpty(cls.Section) && !string.IsNullOrEmpty(student.Section))
+            {
+                var classSec = cls.Section.ToLowerInvariant().Trim();
+                var studSec = student.Section.ToLowerInvariant().Trim();
+
+                if (classSec != studSec)
+                {
+                    return BadRequest($"Section mismatch: Student section ({student.Section}) does not match class section ({cls.Section}).");
+                }
+            }
+
+            // Add class to student
+            student.Classes.Add(cls);
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-        [HttpPost("unenroll-student/{studentId}")]
-        public async Task<IActionResult> UnenrollStudent(int studentId)
+        [HttpPost("{classId}/unenroll-student/{studentId}")]
+        public async Task<IActionResult> UnenrollStudent(int classId, int studentId)
         {
-            var student = await _context.Students.FindAsync(studentId);
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Id == studentId);
             if (student == null) return NotFound("Student not found");
 
-            student.ClassId = null;
-            await _context.SaveChangesAsync();
+            var cls = student.Classes.FirstOrDefault(c => c.Id == classId);
+            if (cls != null)
+            {
+                student.Classes.Remove(cls);
+                await _context.SaveChangesAsync();
+            }
             return Ok();
         }
     }

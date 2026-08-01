@@ -5,7 +5,6 @@ import '../styles/Auth.css'
 
 const specialCharacterPattern = /[^A-Za-z0-9]/
 const numberPattern = /\d/
-const adminEmailPattern = /hod\.ncit\.edu\.np$/
 
 export default function AdminSignup() {
   const navigate = useNavigate()
@@ -50,8 +49,14 @@ export default function AdminSignup() {
       return 'Email is required.'
     }
 
-    if (!adminEmailPattern.test(email.toLowerCase())) {
-      return 'Admin email must end with: hod.ncit.edu.np'
+    const lowerEmail = email.toLowerCase().trim();
+    if (!lowerEmail.endsWith('@ncit.edu.np')) {
+      return 'Teacher email must end with @ncit.edu.np.'
+    }
+
+    const localPart = lowerEmail.split('@')[0];
+    if (!localPart || !localPart.includes('.') || localPart.startsWith('.') || localPart.endsWith('.')) {
+      return 'Teacher email must be in format name.surname@ncit.edu.np.'
     }
 
     return ''
@@ -121,11 +126,11 @@ export default function AdminSignup() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@hod.ncit.edu.np"
+              placeholder="name.surname@ncit.edu.np"
               required
             />
           </label>
-          <p className="auth-hint">Teacher email must end with: hod.ncit.edu.np</p>
+          <p className="auth-hint">Teacher email must include name.surname and end with @ncit.edu.np</p>
 
           <label>
             Password

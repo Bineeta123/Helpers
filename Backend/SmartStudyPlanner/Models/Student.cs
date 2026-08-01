@@ -22,7 +22,6 @@ namespace SmartStudyPlanner.Models
         [Required]
         public string Status { get; set; } = "Active";
 
-        public int? ClassId { get; set; }
-        public Class? Class { get; set; }
+        public ICollection<Class> Classes { get; set; } = new List<Class>();
     }
 }

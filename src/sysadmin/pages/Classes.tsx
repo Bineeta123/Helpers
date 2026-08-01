@@ -41,7 +41,11 @@ export default function Classes() {
       setClasses(response.data);
       if (selectedClass) {
         const updated = response.data.find((c: any) => c.id === selectedClass.id);
-        if (updated) setSelectedClass(updated);
+        if (updated) setSelectedClass({
+          ...updated,
+          teacherClasses: updated.teacherClasses ?? [],
+          students: updated.students ?? []
+        });
       }
     } catch (error) {
       console.error(error);
@@ -116,9 +120,10 @@ export default function Classes() {
   };
 
   const handleUnenrollStudent = async (studentId: number) => {
+    if (!selectedClass) return;
     if (confirm("Unenroll student from this class?")) {
       try {
-        await ClassesService.unenrollStudent(studentId);
+        await ClassesService.unenrollStudent(selectedClass.id, studentId);
         fetchClasses();
         // Refresh students and teachers list to sync
         const [teachRes, studRes] = await Promise.all([TeachersService.getAll(), StudentsService.getAll()]);
@@ -134,7 +139,7 @@ export default function Classes() {
 
   // Filter lists for assigning/enrolling
   const assignedTeacherIds = selectedClass
-    ? selectedClass.teacherClasses.map((tc: any) => tc.teacherId)
+    ? (selectedClass.teacherClasses ?? []).map((tc: any) => tc.teacherId)
     : [];
 
   const availableTeachers = teachers.filter(
@@ -142,7 +147,7 @@ export default function Classes() {
   );
 
   const enrolledStudentIds = selectedClass
-    ? selectedClass.students.map((s: any) => s.id)
+    ? (selectedClass.students ?? []).map((s: any) => s.id)
     : [];
 
   const availableStudents = students.filter((s: any) => {
@@ -157,7 +162,7 @@ export default function Classes() {
     const classNumMatch = classSem.match(/\d+/);
     const studNumMatch = studSem.match(/\d+/);
     const semMatches = classSem.includes(studSem) || studSem.includes(classSem) ||
-                       (classNumMatch && studNumMatch && classNumMatch[0] === studNumMatch[0]);
+      (classNumMatch && studNumMatch && classNumMatch[0] === studNumMatch[0]);
 
     const classSec = (selectedClass.section || "").toLowerCase().trim();
     const studSec = (s.section || "").toLowerCase().trim();
@@ -196,7 +201,11 @@ export default function Classes() {
                 return (
                   <div
                     key={c.id}
-                    onClick={() => setSelectedClass(c)}
+                    onClick={() => setSelectedClass({
+                      ...c,
+                      teacherClasses: c.teacherClasses ?? [],
+                      students: c.students ?? []
+                    })}
                     style={{
                       display: "flex",
                       justifyContent: "between",
@@ -278,7 +287,7 @@ export default function Classes() {
 
                 {/* Assigned teachers list */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {selectedClass.teacherClasses.map((tc: any) => (
+                  {(selectedClass.teacherClasses ?? []).map((tc: any) => (
                     <div key={tc.teacherId} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.5rem 0.75rem", background: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                       <div style={{ flex: 1 }}>
                         <span style={{ fontWeight: 600, color: "#334155" }}>{tc.teacher.name}</span>
@@ -323,7 +332,7 @@ export default function Classes() {
 
                 {/* Enrolled students list */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {selectedClass.students.map((s: any) => {
+                  {(selectedClass.students ?? []).map((s: any) => {
                     // Check whether student is correct for that subject/semester
                     const isSemesterMismatch = s.semester && selectedClass.semester &&
                       !selectedClass.semester.toLowerCase().includes(s.semester.toLowerCase()) &&

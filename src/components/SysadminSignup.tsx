@@ -47,6 +47,12 @@ export default function SysadminSignup() {
     if (!email.trim()) {
       return 'Email is required.'
     }
+
+    const lowerEmail = email.toLowerCase().trim();
+    if (!lowerEmail.endsWith('@hod.ncit.edu.np')) {
+      return 'Admin email must end with @hod.ncit.edu.np.'
+    }
+
     return ''
   }
 
@@ -102,11 +108,11 @@ export default function SysadminSignup() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="admin@system.com"
+              placeholder="name@hod.ncit.edu.np"
               required
             />
           </label>
-          <p className="auth-hint">Enter your system administrator email</p>
+          <p className="auth-hint">Admin email must include: @hod.ncit.edu.np</p>
 
           <label>
             Password

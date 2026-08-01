@@ -53,6 +53,11 @@ namespace SmartStudyPlanner
                 .HasOne(tc => tc.Class)
                 .WithMany(c => c.TeacherClasses)
                 .HasForeignKey(tc => tc.ClassId);
+
+            // Configure many-to-many relationship for Class-Student
+            modelBuilder.Entity<Class>()
+                .HasMany(c => c.Students)
+                .WithMany(s => s.Classes);
                 
             modelBuilder.Entity<AuthorizedUser>()
                 .HasOne(au => au.Department)

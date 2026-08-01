@@ -20,7 +20,7 @@ namespace SmartStudyPlanner.Controllers
         public async Task<IActionResult> GetAll()
         {
             var students = await _context.Students
-                .Include(s => s.Class)
+                .Include(s => s.Classes)
                 .ToListAsync();
             return Ok(students);
         }
@@ -29,7 +29,7 @@ namespace SmartStudyPlanner.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var student = await _context.Students
-                .Include(s => s.Class)
+                .Include(s => s.Classes)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null) return NotFound();

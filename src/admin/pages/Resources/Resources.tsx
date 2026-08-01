@@ -196,12 +196,13 @@ export default function Resources() {
           />
 
           <select
+            required
             name="classId"
             value={newResource.classId}
             onChange={handleChange}
             style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd" }}
           >
-            <option value="">Publish to Class (Optional)...</option>
+            <option value="">Publish to Class (Required)...</option>
             {myClasses.map((cls) => (
               <option key={cls.id} value={cls.id}>
                 {cls.className} ({cls.semester} - {cls.section || "Any"})

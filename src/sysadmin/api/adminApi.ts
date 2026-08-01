@@ -11,7 +11,7 @@ const adminApi = axios.create({
 
 // Interceptor for attaching JWT if needed
 adminApi.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('study-planner-token') || localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -48,7 +48,7 @@ export const ClassesService = {
     assignTeacher: (classId: number, teacherId: number) => adminApi.post(`/AdminClasses/${classId}/assign-teacher/${teacherId}`),
     removeTeacher: (classId: number, teacherId: number) => adminApi.delete(`/AdminClasses/${classId}/remove-teacher/${teacherId}`),
     enrollStudent: (classId: number, studentId: number) => adminApi.post(`/AdminClasses/${classId}/enroll-student/${studentId}`),
-    unenrollStudent: (studentId: number) => adminApi.post(`/AdminClasses/unenroll-student/${studentId}`),
+    unenrollStudent: (classId: number, studentId: number) => adminApi.post(`/AdminClasses/${classId}/unenroll-student/${studentId}`),
 };
 
 export const AuthorizedUsersService = {
