@@ -16,6 +16,14 @@ interface Deadline {
   date: string;
 }
 
+interface AdminStats {
+  totalStudents: number;
+  totalClasses: number;
+  totalAssignments: number;
+  totalResources: number;
+  pendingGrading: number;
+}
+
 export default function AdminDashboard() {
   const { user } = useAuth();
 
@@ -28,12 +36,36 @@ export default function AdminDashboard() {
 
   const [activities, setActivities] = useState<Activity[]>([]);
   const [deadlines, setDeadlines] = useState<Deadline[]>([]);
+  const [stats, setStats] = useState<AdminStats | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5065/api/activity")
-      .then((res) => res.json())
-      .then((data) => setActivities(data))
+    const apiBase = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065";
+
+    fetch(`${apiBase}/api/AdminDashboard/teacher-stats`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("study-planner-token")}`,
+      },
+    })
+      .then((res) => res.ok ? res.json() : Promise.reject(res))
+      .then((data) => {
+        setStats({
+          totalStudents: data.totalStudents,
+          totalClasses: data.totalClasses,
+          totalAssignments: data.totalAssignments,
+          totalResources: data.totalResources,
+          pendingGrading: data.pendingGrading,
+        });
+        setActivities(data.activities || []);
+        setDeadlines(data.upcomingDeadlines || []);
+      })
       .catch(() => {
+        setStats({
+          totalStudents: 0,
+          totalClasses: 0,
+          totalAssignments: 0,
+          totalResources: 0,
+          pendingGrading: 0,
+        });
         setActivities([
           {
             id: 1,
@@ -56,12 +88,6 @@ export default function AdminDashboard() {
             time: "Today",
           },
         ]);
-      });
-
-    fetch("http://localhost:5065/api/deadlines")
-      .then((res) => res.json())
-      .then((data) => setDeadlines(data))
-      .catch(() => {
         setDeadlines([
           {
             id: 1,
@@ -99,10 +125,10 @@ export default function AdminDashboard() {
         </div>
 
         <div className="summary-cards">
-          <SummaryCard title="Total Students" value={128} />
-          <SummaryCard title="Pending Assignments" value={18} />
-          <SummaryCard title="Resources" value={42} />
-          <SummaryCard title="Upcoming Deadlines" value={3} />
+          <SummaryCard title="Students" value={stats?.totalStudents ?? 0} />
+          <SummaryCard title="Classes" value={stats?.totalClasses ?? 0} />
+          <SummaryCard title="Assignments" value={stats?.totalAssignments ?? 0} />
+          <SummaryCard title="Resources" value={stats?.totalResources ?? 0} />
         </div>
 
         {/* Row 1 */}

@@ -1,5 +1,5 @@
-import '../../App.css'
-import './Schedule.css'
+// import '../../App.css'
+// import './Schedule.css'
 
 export default function Schedule() {
   return (
@@ -7,7 +7,7 @@ export default function Schedule() {
       <div className="card card-white">
         <div className="card-title">Weekly Schedule</div>
         <div className="schedule-grid">
-            <div className="schedule-card">
+          <div className="schedule-card">
             <div className="schedule-day">Monday</div>
             <div className="schedule-task">Network programming Problem Set</div>
           </div>
@@ -29,7 +29,9 @@ export default function Schedule() {
           </div>
         </div>
       </div>
-      <div className="card card-white">Finish Agile Development lab notes and review operating systems concepts before the next class.</p>
+      <div className="card card-white">
+        <div className="card-title">Today’s Focus</div>
+        <p className="section-copy">Finish the Agile Software Development lab notes and review operating systems concepts before the next class.</p>
       </div>
     </section>
   )

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./Settings.css";
 
+const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065";
+
 export default function Settings() {
   const [adminName, setAdminName] = useState("Teacher");
   const [email, setEmail] = useState("");
@@ -11,7 +13,7 @@ export default function Settings() {
   const currentEmail = "Sir@hod.ncit.edu.np";
 
   useEffect(() => {
-    fetch(`https://localhost:7161/api/Settings/${encodeURIComponent(currentEmail)}`)
+    fetch(`${API_BASE}/api/Settings/${encodeURIComponent(currentEmail)}`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to load settings.");
@@ -27,7 +29,7 @@ export default function Settings() {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `https://localhost:7161/api/Settings/${encodeURIComponent(currentEmail)}`,
+        `${API_BASE}/api/Settings/${encodeURIComponent(currentEmail)}`,
         {
           method: "PUT",
           headers: {

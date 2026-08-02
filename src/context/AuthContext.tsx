@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
 
-export type UserRole = 'admin' | 'student'
+export type UserRole = 'sysadmin' | 'admin' | 'student'
 export type User = {
   email: string
   role: UserRole
@@ -11,7 +11,7 @@ export type User = {
 type AuthContextType = {
   user: User | null
   login: (email: string, password: string) => Promise<void>
-  signup: (email: string, password: string, role: UserRole) => Promise<void>
+  signup: (email: string, password: string, role: UserRole, extra?: { name?: string; semester?: string; section?: string }) => Promise<void>
   logout: () => void
 }
 
@@ -33,6 +33,9 @@ const API_BASE_URL = (
 ).replace(/\/$/, '')
 
 const normalizeRole = (role?: string): UserRole => {
+  if (role?.toLowerCase() === 'sysadmin') {
+    return 'sysadmin'
+  }
   if (role?.toLowerCase() === 'admin') {
     return 'admin'
   }
@@ -102,7 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(authUser)
   }
 
-  const signup = async (email: string, password: string, role: UserRole) => {
+  const signup = async (email: string, password: string, role: UserRole, extra?: { name?: string; semester?: string; section?: string }) => {
     const response = await fetch(`${API_BASE_URL}/api/Auth/register`, {
       method: 'POST',
       headers: {
@@ -112,7 +115,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
         confirmPassword: password,
-        role: role === 'admin' ? 'Admin' : 'Student',
+        role: role === 'sysadmin' ? 'Sysadmin' : (role === 'admin' ? 'Admin' : 'Student'),
+        name: extra?.name || '',
+        semester: extra?.semester || '',
+        section: extra?.section || '',
       }),
     })
 
@@ -124,18 +130,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!response.ok) {
       throw new Error(message)
     }
-
-    const authUser: User = {
-      email,
-      role,
-      name: email,
-    }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser))
-    if (data.token) {
-      localStorage.setItem(TOKEN_KEY, data.token)
-    }
-    setUser(authUser)
   }
 
   const logout = () => {

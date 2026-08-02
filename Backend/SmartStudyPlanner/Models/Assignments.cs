@@ -22,5 +22,8 @@ namespace SmartStudyPlanner.Models
         public string? Description { get; set; }
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
+
+        public int? ClassId { get; set; }
+        public Class? Class { get; set; }
     }
 }

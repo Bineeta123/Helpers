@@ -23,6 +23,8 @@ namespace SmartStudyPlanner.Models
         public int AdminId { get; set; }
 
          public Admin? Admin { get; set; }
+
+         public int? ClassId { get; set; }
+         public Class? Class { get; set; }
     }
 }
-

@@ -11,6 +11,9 @@ export default function StudentSignup() {
   const navigate = useNavigate()
   const { user, signup } = useAuth()
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [semester, setSemester] = useState('')
+  const [section, setSection] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,7 +21,13 @@ export default function StudentSignup() {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true })
+      if (user.role === 'sysadmin') {
+        navigate('/sysadmin', { replace: true })
+      } else if (user.role === 'admin') {
+        navigate('/admin', { replace: true })
+      } else {
+        navigate('/dashboard', { replace: true })
+      }
     }
   }, [navigate, user])
 
@@ -78,10 +87,26 @@ export default function StudentSignup() {
       return
     }
 
+    if (!name.trim()) {
+      setError('Full Name is required.')
+      return
+    }
+
+    if (!semester) {
+      setError('Please select your semester.')
+      return
+    }
+
+    if (!section) {
+      setError('Please select your section.')
+      return
+    }
+
     setLoading(true)
     try {
-      await signup(email.trim(), password, 'student')
-      navigate('/dashboard')
+      await signup(email.trim(), password, 'student', { name: name.trim(), semester, section })
+      alert('Your registration request has been submitted for admin approval. Please wait until approved before logging in.')
+      navigate('/signin')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed. Try again.')
     } finally {
@@ -99,6 +124,17 @@ export default function StudentSignup() {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <label>
+            Full Name
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Enter your full name"
+              required
+            />
+          </label>
+
+          <label style={{ marginTop: '1rem' }}>
             Email
             <input
               type="email"
@@ -109,6 +145,57 @@ export default function StudentSignup() {
             />
           </label>
           <p className="auth-hint">Must use your NCIT email address</p>
+
+          <label style={{ marginTop: '1rem' }}>
+            Semester
+            <select
+              value={semester}
+              onChange={(event) => setSemester(event.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                marginTop: '0.25rem',
+                fontSize: '1rem',
+                backgroundColor: 'white'
+              }}
+            >
+              <option value="">Select Semester</option>
+              <option value="Semester 1">Semester 1</option>
+              <option value="Semester 2">Semester 2</option>
+              <option value="Semester 3">Semester 3</option>
+              <option value="Semester 4">Semester 4</option>
+              <option value="Semester 5">Semester 5</option>
+              <option value="Semester 6">Semester 6</option>
+              <option value="Semester 7">Semester 7</option>
+              <option value="Semester 8">Semester 8</option>
+            </select>
+          </label>
+
+          <label style={{ marginTop: '1rem' }}>
+            Section
+            <select
+              value={section}
+              onChange={(event) => setSection(event.target.value)}
+              required
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                borderRadius: '8px',
+                border: '1px solid #cbd5e1',
+                marginTop: '0.25rem',
+                fontSize: '1rem',
+                backgroundColor: 'white'
+              }}
+            >
+              <option value="">Select Section</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </label>
 
           <label>
             Password

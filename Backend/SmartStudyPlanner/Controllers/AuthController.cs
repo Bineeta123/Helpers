@@ -31,6 +31,83 @@ namespace SmartStudyPlanner.Controllers
             _context = context;
         }
 
+        [HttpGet("setup-status")]
+        public async Task<IActionResult> GetSetupStatus()
+        {
+            var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+            var hasAdmin = sysadmins.Any();
+            var school = await _context.Set<SchoolSetting>().FirstOrDefaultAsync();
+
+            return Ok(new
+            {
+                hasAdmin,
+                schoolName = school?.Name,
+                schoolAddress = school?.Address
+            });
+        }
+
+        [HttpPost("setup")]
+        public async Task<IActionResult> Setup([FromBody] SetupRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email) ||
+                string.IsNullOrWhiteSpace(request.Password) ||
+                string.IsNullOrWhiteSpace(request.ConfirmPassword) ||
+                string.IsNullOrWhiteSpace(request.SchoolName))
+            {
+                return BadRequest("Email, password, confirm password, and school name are required.");
+            }
+
+            if (request.Password != request.ConfirmPassword)
+            {
+                return BadRequest("Password and confirm password do not match.");
+            }
+
+            if (!IsValidEmailForRole(request.Email, "Sysadmin"))
+            {
+                return BadRequest("Admin email must include @hod.ncit.edu.np");
+            }
+
+            var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+            if (sysadmins.Any())
+            {
+                return BadRequest("Administrator already exists.");
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                return BadRequest("A user with this email already exists.");
+            }
+
+            var user = new IdentityUser
+            {
+                UserName = request.Email,
+                Email = request.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            await _userManager.AddToRoleAsync(user, "Sysadmin");
+
+            var schoolSetting = new SchoolSetting
+            {
+                Name = request.SchoolName,
+                Address = request.SchoolAddress ?? string.Empty
+            };
+
+            _context.Add(schoolSetting);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Administrator account and school details have been created successfully."
+            });
+        }
+
         [HttpPost("register")]
 
         
@@ -50,17 +127,38 @@ namespace SmartStudyPlanner.Controllers
 
             if (!IsValidRole(request.Role))
             {
-                return BadRequest("Role must be Student or Admin.");
+                return BadRequest("Role must be Student, Admin, or Sysadmin.");
+            }
+
+            var existingSysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+            if (!existingSysadmins.Any() && !request.Role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest("No administrator exists yet. Please create the administrator account first.");
             }
 
             if (!IsValidEmailForRole(request.Email, request.Role))
             {
-                if (request.Role == "Student")
+                if (request.Role.Equals("Student", StringComparison.OrdinalIgnoreCase))
                 {
                     return BadRequest("Student email must contain ncit.edu.np");
                 }
+                if (request.Role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest("Admin email must include @hod.ncit.edu.np");
+                }
 
-                return BadRequest("Admin email must contain hod and ncit.edu.np");
+                return BadRequest("Teacher email must include name.surname and end with @ncit.edu.np");
+            }
+
+            if (request.Role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+                if (sysadmins.Any())
+                {
+                    return BadRequest("An Administrator is already registered. Only one Administrator is allowed.");
+                }
+
+                return BadRequest("Please create the administrator account through the first-time setup page.");
             }
 
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
@@ -84,28 +182,40 @@ namespace SmartStudyPlanner.Controllers
 
             await _userManager.AddToRoleAsync(user, request.Role);
 
-            if (request.Role.Equals("Student", StringComparison.OrdinalIgnoreCase))
+            string authUserRole = request.Role;
+            if (request.Role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                var studentExists = await _context.Students
-                    .AnyAsync(student => student.Email == request.Email);
+                authUserRole = "Teacher";
+            }
 
-                if (!studentExists)
+            var authorizedUser = new AuthorizedUser
+            {
+                Name = string.IsNullOrWhiteSpace(request.Name) ? request.Email.Split('@')[0] : request.Name,
+                Email = request.Email,
+                Role = authUserRole,
+                Semester = request.Semester,
+                Section = request.Section,
+                Status = request.Role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase) ? "Active" : "Pending Registration"
+            };
+
+            _context.AuthorizedUsers.Add(authorizedUser);
+            await _context.SaveChangesAsync();
+
+            if (!request.Role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                var regRequest = new RegistrationRequest
                 {
-                    var student = new Student
-                    {
-                        Name = request.Email.Split('@')[0],
-                        Email = request.Email,
-                        Status = "Active"
-                    };
+                    AuthorizedUserId = authorizedUser.Id,
+                    Status = "Pending"
+                };
 
-                    _context.Students.Add(student);
-                    await _context.SaveChangesAsync();
-                }
+                _context.RegistrationRequests.Add(regRequest);
+                await _context.SaveChangesAsync();
             }
 
             return Ok(new
             {
-                message = "User registered successfully.",
+                message = "Your registration request has been submitted for admin approval.",
                 role = request.Role
             });
         }
@@ -132,6 +242,24 @@ namespace SmartStudyPlanner.Controllers
 
             var roles = await _userManager.GetRolesAsync(user);
             var role = roles.FirstOrDefault() ?? "Student";
+
+            if (role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+                var primarySysadmin = sysadmins.OrderBy(u => u.Id).FirstOrDefault();
+                if (primarySysadmin == null || primarySysadmin.Id != user.Id)
+                {
+                    return Unauthorized("Only one Administrator is allowed to login.");
+                }
+            }
+            else
+            {
+                var authUser = await _context.AuthorizedUsers.FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (authUser == null || !authUser.Status.Equals("Active", StringComparison.OrdinalIgnoreCase))
+                {
+                    return Unauthorized("Your account is pending admin approval or you are not authorized to access the system.");
+                }
+            }
 
             var token = CreateToken(user, roles);
 
@@ -174,21 +302,30 @@ namespace SmartStudyPlanner.Controllers
         private static bool IsValidRole(string role)
         {
             return role.Equals("Student", StringComparison.OrdinalIgnoreCase) ||
-                   role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+                   role.Equals("Admin", StringComparison.OrdinalIgnoreCase) ||
+                   role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool IsValidEmailForRole(string email, string role)
         {
-            var lowerEmail = email.ToLowerInvariant();
+            var lowerEmail = email.ToLowerInvariant().Trim();
+
+            if (role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
+            {
+                return lowerEmail.EndsWith("@hod.ncit.edu.np");
+            }
 
             if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
             {
-                return lowerEmail.Contains("ncit.edu.np");
+                return lowerEmail.EndsWith("@ncit.edu.np");
             }
 
             if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                return lowerEmail.Contains("hod") && lowerEmail.Contains("ncit.edu.np");
+                var parts = lowerEmail.Split('@');
+                if (parts.Length != 2 || parts[1] != "ncit.edu.np") return false;
+                var localPart = parts[0];
+                return localPart.Contains('.') && !localPart.StartsWith('.') && !localPart.EndsWith('.') && localPart.Split('.').Length >= 2;
             }
 
             return false;

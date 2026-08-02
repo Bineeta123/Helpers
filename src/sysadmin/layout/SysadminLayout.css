@@ -1,0 +1,62 @@
+.sysadmin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7f8fb 0%, #eef3f7 60%, #f8fafb 100%);
+}
+
+.sysadmin-main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  margin-left: 260px; /* Sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+/* Page Header Styles shared across sysadmin */
+.sysadmin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.sysadmin-page-header h1 {
+  font-size: 1.75rem;
+  color: #1e293b;
+  font-weight: 700;
+  margin: 0;
+}
+
+.sysadmin-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-bottom: 1.5rem;
+}
+
+.sysadmin-btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.sysadmin-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 768px) {
+  .sysadmin-main-content {
+    margin-left: 0;
+    padding: 1rem;
+    padding-bottom: 5rem; /* For mobile bottom nav */
+  }
+}

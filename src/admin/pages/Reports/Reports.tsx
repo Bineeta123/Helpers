@@ -19,7 +19,9 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
 
   const fetchStudentReport = async () => {
+    const apiBase = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065";
     const endpoints = [
+      `${apiBase}/api/Reports/student/${studentId}`,
       `http://localhost:5065/api/Reports/student/${studentId}`,
       `https://localhost:7161/api/Reports/student/${studentId}`
     ];

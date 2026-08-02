@@ -82,6 +82,35 @@ namespace SmartStudyPlanner.Controllers
         // -------------------------------------------------------------
         // POST: api/Resources – upload a file and create a record
         // -------------------------------------------------------------
+        // GET: api/Resources/student - returns only resources for student's class
+        [HttpGet("student")]
+        public async Task<IActionResult> GetStudentResources()
+        {
+            var email = User.Identity?.Name;
+            if (string.IsNullOrEmpty(email)) return Unauthorized("Invalid user session");
+
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Email == email);
+            if (student == null) return NotFound("Student profile not found");
+
+            var classIds = student.Classes.Select(c => c.Id).ToList();
+            if (!classIds.Any())
+            {
+                return Ok(new object[] { });
+            }
+
+            var resources = await _context.Resources
+                .Include(r => r.Class)
+                .Where(r => classIds.Contains(r.ClassId ?? 0))
+                .ToListAsync();
+
+            return Ok(resources);
+        }
+
+        // -------------------------------------------------------------
+        // POST: api/Resources – upload a file and create a record
+        // -------------------------------------------------------------
         [HttpPost]
         public async Task<ActionResult<Resources>> AddResource([FromForm] AddResourceRequest request)
         {
@@ -114,7 +143,8 @@ namespace SmartStudyPlanner.Controllers
                 Type     = request.Type,
                 FileName = request.File.FileName,
                 FilePath = uniqueFileName,
-                AdminId  = adminId.Value
+                AdminId  = adminId.Value,
+                ClassId  = request.ClassId
             };
 
             _context.Resources.Add(resource);
@@ -140,7 +170,7 @@ namespace SmartStudyPlanner.Controllers
             existing.Title   = updated.Title;
             existing.Subject = updated.Subject;
             existing.Type    = updated.Type;
-            // File updates would need a separate endpoint; omitted for brevity
+            existing.ClassId = updated.ClassId;
 
             _context.Entry(existing).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -189,5 +219,6 @@ namespace SmartStudyPlanner.Controllers
         [Required] public string Subject { get; set; } = string.Empty;
         [Required] public string Type    { get; set; } = string.Empty; // e.g. "PDF"
         [Required] public IFormFile File  { get; set; } = null!;
+        public int? ClassId { get; set; }
     }
 }

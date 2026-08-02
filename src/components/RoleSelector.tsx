@@ -1,7 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import '../styles/RoleSelector.css'
 
-function AdminIcon() {
+function SysadminIcon() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#7a9b8f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  )
+}
+
+function TeacherIcon() {
   return (
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="14" cy="10" r="4.5" fill="#7a9b8f" />
@@ -26,8 +35,10 @@ function StudentIcon() {
 export default function RoleSelector() {
   const navigate = useNavigate()
 
-  const handleRoleSelect = (role: 'admin' | 'student') => {
-    if (role === 'admin') {
+  const handleRoleSelect = (role: 'sysadmin' | 'admin' | 'student') => {
+    if (role === 'sysadmin') {
+      navigate('/signin')
+    } else if (role === 'admin') {
       navigate('/admin-signup')
     } else {
       navigate('/student-signup')
@@ -36,7 +47,7 @@ export default function RoleSelector() {
 
   return (
     <div className="role-selector-page">
-      <div className="role-selector-card">
+      <div className="role-selector-card" style={{ maxWidth: '800px' }}>
         <div className="role-selector-heading">
           <h1>Smart Study Planner</h1>
           <p>Choose your role to get started</p>
@@ -45,10 +56,21 @@ export default function RoleSelector() {
         <div className="role-options">
           <button
             className="role-button admin-button"
+            onClick={() => handleRoleSelect('sysadmin')}
+          >
+            <div className="role-icon">
+              <SysadminIcon />
+            </div>
+            <h2>Administrator</h2>
+            <p>Existing admin access. Sign in to manage the system.</p>
+          </button>
+
+          <button
+            className="role-button admin-button"
             onClick={() => handleRoleSelect('admin')}
           >
             <div className="role-icon">
-              <AdminIcon />
+              <TeacherIcon />
             </div>
             <h2>Teacher</h2>
             <p>Manage courses and students</p>

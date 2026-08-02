@@ -5,12 +5,12 @@ import '../styles/Auth.css'
 
 const specialCharacterPattern = /[^A-Za-z0-9]/
 const numberPattern = /\d/
-const adminEmailPattern = /hod\.ncit\.edu\.np$/
 
 export default function AdminSignup() {
   const navigate = useNavigate()
   const { user, signup } = useAuth()
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,7 +18,13 @@ export default function AdminSignup() {
 
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : '/student', { replace: true })
+      if (user.role === 'sysadmin') {
+        navigate('/sysadmin', { replace: true })
+      } else if (user.role === 'admin') {
+        navigate('/admin', { replace: true })
+      } else {
+        navigate('/dashboard', { replace: true })
+      }
     }
   }, [navigate, user])
 
@@ -43,8 +49,14 @@ export default function AdminSignup() {
       return 'Email is required.'
     }
 
-    if (!adminEmailPattern.test(email.toLowerCase())) {
-      return 'Admin email must end with: hod.ncit.edu.np'
+    const lowerEmail = email.toLowerCase().trim();
+    if (!lowerEmail.endsWith('@ncit.edu.np')) {
+      return 'Teacher email must end with @ncit.edu.np.'
+    }
+
+    const localPart = lowerEmail.split('@')[0];
+    if (!localPart || !localPart.includes('.') || localPart.startsWith('.') || localPart.endsWith('.')) {
+      return 'Teacher email must be in format name.surname@ncit.edu.np.'
     }
 
     return ''
@@ -78,10 +90,9 @@ export default function AdminSignup() {
 
     setLoading(true)
     try {
-      await signup(email.trim(), password, 'admin')
-      // Note: In production, this should show a pending approval message
-      // For now, redirecting to admin dashboard
-      navigate('/admin')
+      await signup(email.trim(), password, 'admin', { name: name.trim() })
+      alert('Your registration request has been submitted for admin approval. Please wait until approved before logging in.')
+      navigate('/signin')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed. Try again.')
     } finally {
@@ -99,16 +110,27 @@ export default function AdminSignup() {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <label>
+            Full Name
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Enter your full name"
+              required
+            />
+          </label>
+
+          <label style={{ marginTop: '1rem' }}>
             Email
             <input
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@hod.ncit.edu.np"
+              placeholder="name.surname@ncit.edu.np"
               required
             />
           </label>
-          <p className="auth-hint">Teacher email must end with: hod.ncit.edu.np</p>
+          <p className="auth-hint">Teacher email must include name.surname and end with @ncit.edu.np</p>
 
           <label>
             Password

@@ -1,13 +1,12 @@
 import "./Resources.css";
 import { useEffect, useState } from "react";
 
-const API_URL = "https://localhost:7161/api/resources";
-const BASE_URL = API_URL.replace("/api/resources", "");
-
-
+const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065";
+const API_URL = `${BASE_URL}/api/resources`;
 
 export default function Resources() {
   const [resources, setResources] = useState<any[]>([]);
+  const [myClasses, setMyClasses] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
 
@@ -15,12 +14,14 @@ export default function Resources() {
     title: "",
     subject: "",
     type: "",
+    classId: "",
   });
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchResources();
+    fetchMyClasses();
   }, []);
 
   const fetchResources = async () => {
@@ -30,7 +31,6 @@ export default function Resources() {
           Authorization: `Bearer ${localStorage.getItem("study-planner-token")}`,
         },
       });
-
 
       if (!response.ok) {
         throw new Error("Failed to fetch resources");
@@ -43,6 +43,22 @@ export default function Resources() {
     }
   };
 
+  const fetchMyClasses = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/Assignments/my-classes`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("study-planner-token")}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setMyClasses(data);
+      }
+    } catch (err) {
+      console.error("Error loading teacher classes", err);
+    }
+  };
+
   const handleChange = (e: any) => {
     setNewResource({
       ...newResource,
@@ -50,58 +66,7 @@ export default function Resources() {
     });
   };
 
-  // const addResource = async () => {
-  //   if (
-  //     !newResource.title ||
-  //     !newResource.subject ||
-  //     !newResource.type ||
-  //     !selectedFile
-  //   ) {
-  //     alert("Please fill all fields and choose a file.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-
-  //   formData.append("title", newResource.title);
-  //   formData.append("subject", newResource.subject);
-  //   formData.append("type", newResource.type);
-  //   formData.append("file", selectedFile);
-
-  //   try {
-  //     const response = await fetch(API_URL, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(newResource),
-  //     });
-
-  //     if (response.ok) {
-  //       fetchResources();
-
-  //       setNewResource({
-  //         title: "",
-  //         subject: "",
-  //         type: "",
-  //       });
-
-  //       setShowForm(false);
-  //     } else {
-  //       alert("Failed to add resource.");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-
   const addResource = async () => {
-
-    // console.log("SAVE CLICKED");
-    // console.log(newResource);
-    // console.log(selectedFile);
-
     if (
       !newResource.title ||
       !newResource.subject ||
@@ -113,14 +78,15 @@ export default function Resources() {
     }
 
     const formData = new FormData();
-
     formData.append("title", newResource.title);
     formData.append("subject", newResource.subject);
     formData.append("type", newResource.type);
     formData.append("file", selectedFile);
+    if (newResource.classId) {
+      formData.append("classId", newResource.classId);
+    }
 
     try {
-
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
@@ -130,30 +96,22 @@ export default function Resources() {
       });
 
       if (response.ok) {
-
         fetchResources();
-
         setNewResource({
           title: "",
           subject: "",
           type: "",
+          classId: "",
         });
-
         setSelectedFile(null);
-
         setShowForm(false);
-
       } else {
         const errText = await response.text();
         alert(`Failed to upload resource. Status: ${response.status}. Error: ${errText}`);
       }
-
     } catch (error) {
-
       console.error(error);
-
     }
-
   };
 
   const deleteResource = async (id: number) => {
@@ -180,7 +138,6 @@ export default function Resources() {
   };
 
   const viewResource = (resource: any) => {
-
     if (!resource.filePath) {
       alert("No file uploaded.");
       return;
@@ -190,7 +147,6 @@ export default function Resources() {
       `${BASE_URL}/Uploads/Resources/${resource.filePath}`,
       "_blank"
     );
-
   };
 
   const filteredResources = resources.filter((resource: any) => {
@@ -203,15 +159,12 @@ export default function Resources() {
 
   return (
     <div className="resources-page">
-
       <div className="resources-header">
         <div>
           <h1>Resources</h1>
           <p>Upload and manage study materials.</p>
         </div>
       </div>
-
-      {/* Upload Button */}
 
       <div className="upload-section">
         <button
@@ -222,11 +175,8 @@ export default function Resources() {
         </button>
       </div>
 
-      {/* Upload Form */}
-
       {showForm && (
         <div className="add-resource-form">
-
           <h3>Upload Resource</h3>
 
           <input
@@ -245,6 +195,21 @@ export default function Resources() {
             onChange={handleChange}
           />
 
+          <select
+            required
+            name="classId"
+            value={newResource.classId}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #ddd" }}
+          >
+            <option value="">Publish to Class (Required)...</option>
+            {myClasses.map((cls) => (
+              <option key={cls.id} value={cls.id}>
+                {cls.className} ({cls.semester} - {cls.section || "Any"})
+              </option>
+            ))}
+          </select>
+
           <input
             type="text"
             name="type"
@@ -257,16 +222,13 @@ export default function Resources() {
             type="file"
             accept=".pdf,.ppt,.pptx,.doc,.docx"
             onChange={(e) => {
-
               if (e.target.files) {
                 setSelectedFile(e.target.files[0]);
               }
-
             }}
           />
 
           <div className="form-buttons">
-
             <button
               className="save-btn"
               onClick={addResource}
@@ -278,23 +240,19 @@ export default function Resources() {
               className="cancel-btn"
               onClick={() => {
                 setShowForm(false);
-
                 setNewResource({
                   title: "",
                   subject: "",
                   type: "",
+                  classId: "",
                 });
               }}
             >
               Cancel
             </button>
-
           </div>
-
         </div>
       )}
-
-      {/* Search */}
 
       <div className="search-box">
         <input
@@ -305,10 +263,7 @@ export default function Resources() {
         />
       </div>
 
-      {/* Table */}
-
       <table className="resources-table">
-
         <thead>
           <tr>
             <th>Title</th>
@@ -320,11 +275,8 @@ export default function Resources() {
         </thead>
 
         <tbody>
-
           {filteredResources.length > 0 ? (
-
             filteredResources.map((resource: any) => (
-
               <tr key={resource.id}>
                 <td>{resource.title}</td>
                 <td>{resource.subject}</td>
@@ -332,7 +284,6 @@ export default function Resources() {
                 <td>{resource.fileName}</td>
 
                 <td>
-
                   <button
                     className="view-btn"
                     onClick={() => viewResource(resource)}>
@@ -345,32 +296,18 @@ export default function Resources() {
                   >
                     Delete
                   </button>
-
                 </td>
-
               </tr>
-
             ))
-
           ) : (
-
             <tr>
-
               <td colSpan={5} style={{ textAlign: "center" }}>
                 No resources found.
               </td>
-
             </tr>
-
           )}
-
         </tbody>
-
       </table>
-
     </div>
   );
 }
-
-
-
