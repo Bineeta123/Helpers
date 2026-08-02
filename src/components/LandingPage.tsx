@@ -7,59 +7,47 @@ export default function LandingPage() {
   return (
     <div className="landing-page">
       <div className="landing-container">
-        <section className="landing-hero">
-          <div className="landing-copy">
-            <div className="landing-brand">
-              <span className="landing-brand-mark">SSP</span>
-              <p className="overline">Smart Study Planner</p>
-            </div>
-
-            <h1>Organize classes, approvals, and school life in one beautiful place.</h1>
-            <p className="description">
-              Set up your first administrator account, configure school details, and empower teachers and students with a calm, modern dashboard experience.
-            </p>
-
-            <div className="landing-actions">
-              <button className="landing-action-button" onClick={() => navigate('/setup')}>
-                Start first-time setup
-              </button>
-              <button className="landing-action-button landing-secondary-button" onClick={() => navigate('/signin')}>
-                Sign in
-              </button>
-            </div>
-
-            <div className="landing-link-row">
-              <span>Register as a teacher or student</span>
-              <button className="landing-link-button" onClick={() => navigate('/role-selector')}>
-                Start registration
-              </button>
-            </div>
-          </div>
-
-          <div className="landing-visual">
-            <div className="visual-card">
-              <div className="visual-card-media">
-                <div className="visual-photo" />
+        <div className="landing-card">
+          <div className="landing-card-grid">
+            <div className="landing-copy">
+              <div className="landing-brand">
+                <span className="landing-brand-mark">SSP</span>
+                <p className="overline">Smart Study Planner</p>
               </div>
-              <div className="visual-copy">
-                <div className="visual-pill">Built for schools and classrooms</div>
-                <h2>Welcome to a calm, connected planning experience.</h2>
-                <p>Track approvals and classroom progress from a single, polished workspace.</p>
+
+              <h1>Organize classes, approvals, and school life in one beautiful place.</h1>
+              <p className="description">
+                Set up your first administrator account, configure school details, and empower teachers and students with a calm, modern dashboard experience.
+              </p>
+
+              <div className="landing-actions">
+                <button className="landing-action-button" onClick={() => navigate('/setup')}>
+                  Start first-time setup
+                </button>
+                <button className="landing-action-button landing-secondary-button" onClick={() => navigate('/signin')}>
+                  Sign in
+                </button>
               </div>
-              <div className="community-panel">
-                <p className="community-title">My Community</p>
-                <div className="community-members">
-                  <span className="community-avatar">MD</span>
-                  <span className="community-avatar">AR</span>
-                  <span className="community-avatar">LJ</span>
-                  <span className="community-tag">Mrs. Davis</span>
-                  <span className="community-tag">Alex R.</span>
-                  <span className="community-tag">Liam J.</span>
-                </div>
+
+              <div className="landing-link-row">
+                <span>Register as a teacher or student</span>
+                <button className="landing-link-button" onClick={() => navigate('/role-selector')}>
+                  Start registration
+                </button>
+              </div>
+            </div>
+
+            <div className="landing-preview">
+              <div className="preview-frame">
+                <img
+                  className="preview-image"
+                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80"
+                  alt="Teacher and student working together"
+                />
               </div>
             </div>
           </div>
-        </section>
+        </div>
 
         <section className="feature-grid">
           <article className="feature-card">

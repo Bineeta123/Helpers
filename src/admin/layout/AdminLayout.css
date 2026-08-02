@@ -2,7 +2,7 @@
 .admin-layout{
     display:flex;
     min-height:100vh;
-    background:#f5f7f9;
+    background: linear-gradient(180deg, #f7f8fb 0%, #eef3f7 60%, #f8fafb 100%);
 }
 
 .admin-main{
