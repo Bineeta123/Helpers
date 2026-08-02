@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import '../styles/LandingPage.css'
+import landingImg from './landingpage.png'
 
 export default function LandingPage() {
   const navigate = useNavigate()
@@ -41,7 +42,7 @@ export default function LandingPage() {
               <div className="preview-frame">
                 <img
                   className="preview-image"
-                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80"
+                  src={landingImg}
                   alt="Teacher and student working together"
                 />
               </div>
