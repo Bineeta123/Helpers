@@ -31,6 +31,83 @@ namespace SmartStudyPlanner.Controllers
             _context = context;
         }
 
+        [HttpGet("setup-status")]
+        public async Task<IActionResult> GetSetupStatus()
+        {
+            var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+            var hasAdmin = sysadmins.Any();
+            var school = await _context.Set<SchoolSetting>().FirstOrDefaultAsync();
+
+            return Ok(new
+            {
+                hasAdmin,
+                schoolName = school?.Name,
+                schoolAddress = school?.Address
+            });
+        }
+
+        [HttpPost("setup")]
+        public async Task<IActionResult> Setup([FromBody] SetupRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email) ||
+                string.IsNullOrWhiteSpace(request.Password) ||
+                string.IsNullOrWhiteSpace(request.ConfirmPassword) ||
+                string.IsNullOrWhiteSpace(request.SchoolName))
+            {
+                return BadRequest("Email, password, confirm password, and school name are required.");
+            }
+
+            if (request.Password != request.ConfirmPassword)
+            {
+                return BadRequest("Password and confirm password do not match.");
+            }
+
+            if (!IsValidEmailForRole(request.Email, "Sysadmin"))
+            {
+                return BadRequest("Admin email must include @hod.ncit.edu.np");
+            }
+
+            var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
+            if (sysadmins.Any())
+            {
+                return BadRequest("Administrator already exists.");
+            }
+
+            var existingUser = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                return BadRequest("A user with this email already exists.");
+            }
+
+            var user = new IdentityUser
+            {
+                UserName = request.Email,
+                Email = request.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            await _userManager.AddToRoleAsync(user, "Sysadmin");
+
+            var schoolSetting = new SchoolSetting
+            {
+                Name = request.SchoolName,
+                Address = request.SchoolAddress ?? string.Empty
+            };
+
+            _context.Add(schoolSetting);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Administrator account and school details have been created successfully."
+            });
+        }
+
         [HttpPost("register")]
 
         
@@ -80,6 +157,8 @@ namespace SmartStudyPlanner.Controllers
                 {
                     return BadRequest("An Administrator is already registered. Only one Administrator is allowed.");
                 }
+
+                return BadRequest("Please create the administrator account through the first-time setup page.");
             }
 
             var existingUser = await _userManager.FindByEmailAsync(request.Email);

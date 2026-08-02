@@ -20,6 +20,7 @@ namespace SmartStudyPlanner
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<AuthorizedUser> AuthorizedUsers { get; set; }
         public DbSet<RegistrationRequest> RegistrationRequests { get; set; }
+        public DbSet<SchoolSetting> SchoolSettings { get; set; }
         public DbSet<Class> Classes { get; set; }
         public DbSet<TeacherClass> TeacherClasses { get; set; }
         public DbSet<Department> Departments { get; set; }
@@ -65,4 +66,4 @@ namespace SmartStudyPlanner
                 .HasForeignKey(au => au.DepartmentId);
         }
     }
-}
+}

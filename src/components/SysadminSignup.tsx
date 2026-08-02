@@ -24,6 +24,8 @@ export default function SysadminSignup() {
       } else {
         navigate('/dashboard', { replace: true })
       }
+    } else {
+      navigate('/setup', { replace: true })
     }
   }, [navigate, user])
 

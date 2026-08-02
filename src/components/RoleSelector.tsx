@@ -37,7 +37,7 @@ export default function RoleSelector() {
 
   const handleRoleSelect = (role: 'sysadmin' | 'admin' | 'student') => {
     if (role === 'sysadmin') {
-      navigate('/sysadmin-signup')
+      navigate('/signin')
     } else if (role === 'admin') {
       navigate('/admin-signup')
     } else {
@@ -61,8 +61,8 @@ export default function RoleSelector() {
             <div className="role-icon">
               <SysadminIcon />
             </div>
-            <h2>Admin</h2>
-            <p>Manage system, users, & classes</p>
+            <h2>Administrator</h2>
+            <p>Existing admin access. Sign in to manage the system.</p>
           </button>
 
           <button
