@@ -3,7 +3,7 @@ import { FiBarChart2, FiCheckCircle, FiStar, FiInfo } from "react-icons/fi";
 import "../../App.css";
 import "./Analytics.css";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7161";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5065";
 
 type SubjectMetric = {
   name: string;

@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { FiBookOpen, FiClock, FiCalendar, FiArrowRight, FiAlertCircle } from "react-icons/fi";
 import "./Dashboard.css";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7161";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5065";
 
 type SubjectInfo = {
   name: string;
@@ -15,6 +15,8 @@ type SubjectInfo = {
   priorityLevel: "High" | "Medium" | "Low";
   nearestDeadline: string | null;
   daysToDeadline: number;
+  overdueAssignments: number;
+  averageGrade: number | null;
 };
 
 export default function Dashboard() {
@@ -135,14 +137,30 @@ export default function Dashboard() {
           }
         }
 
-        // Backlog weighting (pending counts)
-        const pBacklog = Math.min(5, pendingAssign.length * 1.5);
+        // Calculate overdue assignments
+        const overdueAssign = subAssignments.filter((a: any) => !a.submission && new Date(a.assignment.dueDate).getTime() < now.getTime()).length;
 
-        const totalRaw = pDeadline + pExam + pBacklog;
-        const finalScore = Math.min(10, Math.max(0.5, parseFloat(totalRaw.toFixed(1))));
+        // Calculate average grade
+        const gradedSubmissions = subAssignments.filter((a: any) => a.submission && a.submission.status === "Graded" && a.submission.grade !== null);
+        const avgGrade = gradedSubmissions.length > 0
+          ? (gradedSubmissions.reduce((sum: number, a: any) => sum + a.submission.grade, 0) / gradedSubmissions.length)
+          : null;
+
+        // Base factors
+        const pendingFactor = pendingAssign.length * 2.0; 
+        const overdueFactor = overdueAssign * 3.5; 
+        const completionRateFactor = totalAssign > 0 ? (1 - completedAssign / totalAssign) * 4.0 : 0; 
+        const gradeFactor = avgGrade !== null ? (5.0 - avgGrade) * 1.5 : 0; 
+
+        // Keep the deadline and exam weighting
+        const deadlineFactor = pDeadline * 0.8;
+        const examFactor = pExam * 0.8;
+
+        const totalRaw = pendingFactor + overdueFactor + completionRateFactor + gradeFactor + deadlineFactor + examFactor;
+        const finalScore = Math.min(10.0, Math.max(0.5, parseFloat(totalRaw.toFixed(1))));
 
         let level: "High" | "Medium" | "Low" = "Low";
-        if (finalScore >= 7.5) level = "High";
+        if (finalScore >= 7.0) level = "High";
         else if (finalScore >= 4.0) level = "Medium";
 
         return {
@@ -153,7 +171,9 @@ export default function Dashboard() {
           priorityScore: finalScore,
           priorityLevel: level,
           nearestDeadline: nearestDeadlineDate,
-          daysToDeadline
+          daysToDeadline,
+          overdueAssignments: overdueAssign,
+          averageGrade: avgGrade
         };
       });
 
@@ -188,6 +208,35 @@ export default function Dashboard() {
     const localPart = rawName.split("@")[0];
     return localPart.charAt(0).toUpperCase() + localPart.slice(1);
   })();
+
+  const getReasonText = (sub: SubjectInfo) => {
+    if (sub.overdueAssignments > 0) {
+      return `You have ${sub.overdueAssignments} overdue ${sub.overdueAssignments === 1 ? 'assignment' : 'assignments'} that need immediate submission.`;
+    }
+    if (sub.averageGrade !== null && sub.averageGrade < 3.0) {
+      return `Your current average grade is low (${sub.averageGrade.toFixed(1)}/5 stars). Focusing here will help improve your academic standing.`;
+    }
+    const pending = sub.totalAssignments - sub.completedAssignments;
+    if (pending > 0 && sub.daysToDeadline <= 3) {
+      return `An assignment is due in ${sub.daysToDeadline} ${sub.daysToDeadline === 1 ? 'day' : 'days'} (${new Date(sub.nearestDeadline!).toLocaleDateString()}).`;
+    }
+    if (pending > 0) {
+      const completionRate = sub.totalAssignments > 0 ? (sub.completedAssignments / sub.totalAssignments) * 100 : 100;
+      return `You have ${pending} pending ${pending === 1 ? 'assignment' : 'assignments'} with a ${Math.round(completionRate)}% completion rate.`;
+    }
+    const savedExam = localStorage.getItem(`exam-date-${sub.name.toLowerCase()}`);
+    if (savedExam) {
+      const diffTime = new Date(savedExam).getTime() - new Date().getTime();
+      const daysToExam = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (daysToExam > 0) {
+        return `Exam for this subject is approaching in ${daysToExam} days. Start early preparation.`;
+      }
+    }
+    return `Review active course materials and uploaded study resources to stay ahead in class.`;
+  };
+
+  const hasPerformanceData = subjects.some(s => s.totalAssignments > 0);
+  const focusSubjects = subjects.slice(0, 3);
 
   if (loading) {
     return <div className="student-loading">Loading student portal...</div>;
@@ -317,20 +366,38 @@ export default function Dashboard() {
           </div>
 
           {/* Quick study recommendation based on priority */}
-          {subjects.length > 0 && subjects[0].priorityLevel === "High" && (
+          {subjects.length > 0 && (
             <div className="side-card recommendation-box">
               <div className="rec-header">
                 <FiAlertCircle size={20} />
-                <h3>Focus Subject</h3>
+                <h3>Focus Subjects</h3>
               </div>
-              <p>Your scheduling algorithm recommends focusing on <strong>{subjects[0].name}</strong> due to close deadlines or upcoming exams.</p>
-              <button
-                className="student-btn-primary"
-                onClick={() => navigate(`/subject/${encodeURIComponent(subjects[0].name)}`)}
-                style={{ width: "100%", marginTop: "0.5rem" }}
-              >
-                Go to Subject Details
-              </button>
+              
+              {!hasPerformanceData && (
+                <p className="rec-fallback-text">
+                  More study data is needed to generate personalized recommendations.
+                </p>
+              )}
+
+              <div className="rec-subjects-list">
+                {focusSubjects.map((sub) => (
+                  <div key={sub.name} className="rec-subject-item">
+                    <div className="rec-subject-info">
+                      <h4>{sub.name}</h4>
+                      <span className={`priority-badge ${sub.priorityLevel.toLowerCase()}`}>
+                        {sub.priorityLevel}
+                      </span>
+                    </div>
+                    <p className="rec-reason">{getReasonText(sub)}</p>
+                    <button
+                      className="student-btn-primary rec-btn"
+                      onClick={() => navigate(`/subject/${encodeURIComponent(sub.name)}`)}
+                    >
+                      Go to Subject Details
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

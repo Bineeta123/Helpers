@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import "../../App.css";
 import "./Assignments.css";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7161";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5065";
 
 type StudentAssignmentRow = {
   assignment: {

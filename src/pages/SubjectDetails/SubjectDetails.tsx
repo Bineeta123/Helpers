@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FiBookOpen, FiFolder, FiBarChart2, FiClock, FiDownload, FiUpload, FiArrowLeft, FiStar, FiCalendar, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import "./SubjectDetails.css";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7161";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5065";
 
 type TabId = "assignments" | "resources" | "analytics" | "priority";
 

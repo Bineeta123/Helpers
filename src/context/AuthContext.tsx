@@ -29,7 +29,7 @@ const TOKEN_KEY = 'study-planner-token'
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL ||
   import.meta.env.NEXT_PUBLIC_API_URL ||
-  'https://localhost:7161'
+  'http://localhost:5065'
 ).replace(/\/$/, '')
 
 const normalizeRole = (role?: string): UserRole => {

@@ -80,6 +80,63 @@ namespace SmartStudyPlanner.Controllers
                 .Where(s => classIds.Contains(s.Assignment.ClassId ?? 0) && s.Status == "Submitted")
                 .CountAsync();
 
+            // Active students
+            var activeStudents = await _context.Students
+                .Where(s => s.Classes.Any(c => classIds.Contains(c.Id)) && s.Status == "Active")
+                .CountAsync();
+
+            // Graded vs Total submissions
+            var gradedSubmissions = await _context.AssignmentSubmissions
+                .Include(s => s.Assignment)
+                .Where(s => classIds.Contains(s.Assignment.ClassId ?? 0) && s.Status == "Graded")
+                .CountAsync();
+
+            var totalSubmissions = await _context.AssignmentSubmissions
+                .Include(s => s.Assignment)
+                .Where(s => classIds.Contains(s.Assignment.ClassId ?? 0))
+                .CountAsync();
+
+            // Most active class
+            var classesWithStudents = await _context.Classes
+                .Include(c => c.Students)
+                .Where(c => classIds.Contains(c.Id))
+                .ToListAsync();
+
+            var mostActiveClass = "None";
+            if (classesWithStudents.Any())
+            {
+                var classSubmissions = new Dictionary<string, int>();
+                foreach (var c in classesWithStudents)
+                {
+                    var count = await _context.AssignmentSubmissions
+                        .Include(s => s.Assignment)
+                        .Where(s => s.Assignment.ClassId == c.Id)
+                        .CountAsync();
+                    classSubmissions[c.ClassName] = count;
+                }
+                var topClass = classSubmissions.OrderByDescending(kv => kv.Value).FirstOrDefault();
+                if (topClass.Value > 0)
+                {
+                    mostActiveClass = topClass.Key;
+                }
+                else
+                {
+                    mostActiveClass = classesWithStudents.First().ClassName;
+                }
+            }
+
+            // Completion Rate
+            int totalExpectedSubmissions = 0;
+            foreach (var cls in classesWithStudents)
+            {
+                var classAssignmentCount = await _context.Assignments.CountAsync(a => a.ClassId == cls.Id);
+                totalExpectedSubmissions += cls.Students.Count * classAssignmentCount;
+            }
+
+            double completionRate = totalExpectedSubmissions > 0
+                ? Math.Round(((double)totalSubmissions / totalExpectedSubmissions) * 100, 1)
+                : 0;
+
             // Recent activity lists
             var recentSubmissions = await _context.AssignmentSubmissions
                 .Include(s => s.Assignment)
@@ -135,6 +192,11 @@ namespace SmartStudyPlanner.Controllers
                 TotalAssignments = totalAssignments,
                 TotalResources = totalResources,
                 PendingGrading = pendingGrading,
+                ActiveStudents = activeStudents,
+                GradedSubmissions = gradedSubmissions,
+                TotalSubmissions = totalSubmissions,
+                MostActiveClass = mostActiveClass,
+                CompletionRate = completionRate,
                 Activities = activities,
                 UpcomingDeadlines = upcomingDeadlines
             });

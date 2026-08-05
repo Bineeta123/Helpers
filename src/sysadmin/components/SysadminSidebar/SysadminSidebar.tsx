@@ -33,37 +33,37 @@ export default function SysadminSidebar() {
 
   return (
     <aside className="sysadmin-sidebar">
-      <div>
-        <div className="sysadmin-logo">
-          <h2>Study Planner</h2>
-          <p>Admin Control Panel</p>
-        </div>
-
-        <nav className="sysadmin-menu">
-          {menuItems.map((item) => (
-            <NavLink
-              key={item.title}
-              to={`/sysadmin/${item.path}`}
-              className={({ isActive }) =>
-                isActive ? "sysadmin-menu-item active" : "sysadmin-menu-item"
-              }
-              end={item.path === ""}
-            >
-              {item.icon}
-              <span>{item.title}</span>
-            </NavLink>
-          ))}
-        </nav>
+      <div className="sysadmin-logo">
+        <h2>Study Planner</h2>
+        <p>Admin Control Panel</p>
       </div>
 
-      <button
-        type="button"
-        className="logout-button"
-        onClick={handleLogout}
-      >
-        <FiLogOut />
-        <span>Logout</span>
-      </button>
+      <nav className="sysadmin-menu">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.title}
+            to={`/sysadmin/${item.path}`}
+            className={({ isActive }) =>
+              isActive ? "sysadmin-menu-item active" : "sysadmin-menu-item"
+            }
+            end={item.path === ""}
+          >
+            {item.icon}
+            <span>{item.title}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="sysadmin-footer">
+        <button
+          type="button"
+          className="logout-button"
+          onClick={handleLogout}
+        >
+          <FiLogOut />
+          <span>Logout</span>
+        </button>
+      </div>
     </aside>
   );
 }

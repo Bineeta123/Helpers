@@ -5,12 +5,16 @@
   border-right: 1px solid #dbe4ef;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   padding: 20px;
   position: fixed;
   left: 0;
   top: 0;
   box-sizing: border-box;
+  z-index: 1000;
+}
+
+.admin-logo {
+  flex-shrink: 0;
 }
 
 .admin-logo h2 {
@@ -30,10 +34,17 @@
 }
 
 .admin-menu {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 40px;
+}
+
+.admin-menu::-webkit-scrollbar {
+  display: none;
 }
 
 .admin-menu-item {
@@ -58,6 +69,13 @@
     color:white;
 }
 
+.admin-footer {
+  margin-top: auto;
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .logout-button {
   display: flex;
   align-items: center;
@@ -71,10 +89,12 @@
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .logout-button:hover {
- background:#374151;
+  background:#374151;
 }
 
 .admin-menu-item.active {

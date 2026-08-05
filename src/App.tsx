@@ -25,7 +25,7 @@ import SysadminApp from "./sysadmin/SysadminApp";
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL ||
   import.meta.env.NEXT_PUBLIC_API_URL ||
-  'https://localhost:7161'
+  'http://localhost:5065'
 ).replace(/\/$/, '')
 
 function HomeRedirect() {

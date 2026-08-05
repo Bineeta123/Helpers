@@ -29,37 +29,37 @@ export default function AdminSidebar() {
 
   return (
     <aside className="admin-sidebar">
-      <div>
-        <div className="admin-logo">
-          <h2>Study Planner</h2>
-          <p>Teacher Portal</p>
-        </div>
-
-        <nav className="admin-menu">
-          {menuItems.map((item) => (
-            <NavLink
-              key={item.title}
-              to={`/admin/${item.path}`}
-              className={({ isActive }) =>
-                isActive ? "admin-menu-item active" : "admin-menu-item"
-              }
-              end={item.path === ""}
-            >
-              {item.icon}
-              <span>{item.title}</span>
-            </NavLink>
-          ))}
-        </nav>
+      <div className="admin-logo">
+        <h2>Study Planner</h2>
+        <p>Teacher Portal</p>
       </div>
 
-      <button
-        type="button"
-        className="logout-button"
-        onClick={handleLogout}
-      >
-        <FiLogOut />
-        <span>Logout</span>
-      </button>
+      <nav className="admin-menu">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.title}
+            to={`/admin/${item.path}`}
+            className={({ isActive }) =>
+              isActive ? "admin-menu-item active" : "admin-menu-item"
+            }
+            end={item.path === ""}
+          >
+            {item.icon}
+            <span>{item.title}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="admin-footer">
+        <button
+          type="button"
+          className="logout-button"
+          onClick={handleLogout}
+        >
+          <FiLogOut />
+          <span>Logout</span>
+        </button>
+      </div>
     </aside>
   );
 }

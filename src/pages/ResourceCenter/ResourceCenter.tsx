@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import '../../App.css';
 import './ResourceCenter.css';
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://localhost:7161";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5065";
 
 export default function ResourceCenter() {
   const [resources, setResources] = useState<any[]>([]);

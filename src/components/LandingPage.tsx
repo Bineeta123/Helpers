@@ -22,18 +22,8 @@ export default function LandingPage() {
               </p>
 
               <div className="landing-actions">
-                <button className="landing-action-button" onClick={() => navigate('/setup')}>
-                  Start first-time setup
-                </button>
-                <button className="landing-action-button landing-secondary-button" onClick={() => navigate('/signin')}>
-                  Sign in
-                </button>
-              </div>
-
-              <div className="landing-link-row">
-                <span>Register as a teacher or student</span>
-                <button className="landing-link-button" onClick={() => navigate('/role-selector')}>
-                  Start registration
+                <button className="landing-action-button" onClick={() => navigate('/role-selector')}>
+                  Start Registration
                 </button>
               </div>
             </div>

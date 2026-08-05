@@ -1,6 +1,5 @@
 import "./AdminDashboard.css";
 import { useEffect, useState } from "react";
-import AdminSidebar from "../../components/AdminSidebar/AdminSidebar";
 import SummaryCard from "../../components/SummaryCard/SummaryCard";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -22,6 +21,11 @@ interface AdminStats {
   totalAssignments: number;
   totalResources: number;
   pendingGrading: number;
+  activeStudents: number;
+  gradedSubmissions: number;
+  totalSubmissions: number;
+  mostActiveClass: string;
+  completionRate: number;
 }
 
 export default function AdminDashboard() {
@@ -54,6 +58,11 @@ export default function AdminDashboard() {
           totalAssignments: data.totalAssignments,
           totalResources: data.totalResources,
           pendingGrading: data.pendingGrading,
+          activeStudents: data.activeStudents,
+          gradedSubmissions: data.gradedSubmissions,
+          totalSubmissions: data.totalSubmissions,
+          mostActiveClass: data.mostActiveClass,
+          completionRate: data.completionRate,
         });
         setActivities(data.activities || []);
         setDeadlines(data.upcomingDeadlines || []);
@@ -65,6 +74,11 @@ export default function AdminDashboard() {
           totalAssignments: 0,
           totalResources: 0,
           pendingGrading: 0,
+          activeStudents: 0,
+          gradedSubmissions: 0,
+          totalSubmissions: 0,
+          mostActiveClass: "None",
+          completionRate: 0,
         });
         setActivities([
           {
@@ -113,10 +127,63 @@ export default function AdminDashboard() {
       });
   }, []);
 
+  const getInsights = () => {
+    if (!stats) return ["Loading insights..."];
+
+    const hasData = stats.totalStudents > 0 || stats.totalClasses > 0 || stats.totalAssignments > 0 || stats.totalResources > 0;
+
+    if (!hasData) {
+      return [
+        "No study data available yet. Start by adding students, classes, assignments, or resources to view insights."
+      ];
+    }
+
+    const insightsList: string[] = [];
+
+    // Total assignments created
+    insightsList.push(`Total of ${stats.totalAssignments} ${stats.totalAssignments === 1 ? 'assignment has' : 'assignments have'} been created.`);
+
+    // Pending grading
+    if (stats.pendingGrading > 0) {
+      insightsList.push(`${stats.pendingGrading} ${stats.pendingGrading === 1 ? 'assignment is' : 'assignments are'} currently pending grading.`);
+    } else {
+      insightsList.push("All submitted assignments have been graded.");
+    }
+
+    // Completed/Graded assignments
+    if (stats.gradedSubmissions > 0) {
+      insightsList.push(`${stats.gradedSubmissions} ${stats.gradedSubmissions === 1 ? 'assignment has' : 'assignments have'} been graded.`);
+    }
+
+    // Active students
+    if (stats.activeStudents > 0) {
+      insightsList.push(`${stats.activeStudents} active ${stats.activeStudents === 1 ? 'student is' : 'students are'} enrolled in your classes.`);
+    } else {
+      insightsList.push("No active students enrolled in your classes yet.");
+    }
+
+    // Most active class
+    if (stats.mostActiveClass && stats.mostActiveClass !== "None") {
+      insightsList.push(`${stats.mostActiveClass} is the most active class based on submissions.`);
+    }
+
+    // Resources uploaded
+    if (stats.totalResources > 0) {
+      insightsList.push(`${stats.totalResources} study ${stats.totalResources === 1 ? 'resource is' : 'resources are'} available.`);
+    } else {
+      insightsList.push("No study resources have been uploaded yet.");
+    }
+
+    // Assignment completion rate
+    if (stats.totalAssignments > 0 && stats.totalStudents > 0) {
+      insightsList.push(`${stats.completionRate}% of expected assignments have been completed.`);
+    }
+
+    return insightsList;
+  };
+
   return (
     <div className="admin-dashboard">
-      <AdminSidebar />
-
       <main className="admin-dashboard-content">
 
         <div className="dashboard-header">
@@ -131,89 +198,52 @@ export default function AdminDashboard() {
           <SummaryCard title="Resources" value={stats?.totalResources ?? 0} />
         </div>
 
-        {/* Row 1 */}
-
         <div className="admin-dashboard-grid">
 
-          <div className="dashboard-card">
-
+          <div className="dashboard-card recent-activity-card">
             <h2>Recent Activity</h2>
-
-            {activities.map((activity) => (
-              <div
-                className="activity-item"
-                key={activity.id}
-              >
-                <div>
-                  <strong>{activity.description}</strong>
-                  <p>{activity.time}</p>
+            {activities.length > 0 ? (
+              activities.map((activity) => (
+                <div className="activity-item" key={activity.id}>
+                  <div>
+                    <strong>{activity.description}</strong>
+                    <p>{activity.time}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-
+              ))
+            ) : (
+              <p className="empty-state-text">No recent activity found.</p>
+            )}
           </div>
 
-          <div className="dashboard-card">
-
-            <h2>Upcoming Deadlines</h2>
-
-            {deadlines.map((deadline) => (
-              <div
-                className="deadline-item"
-                key={deadline.id}
-              >
-                <span>{deadline.title}</span>
-                <strong>{deadline.date}</strong>
-              </div>
-            ))}
-
-          </div>
-
-        </div>
-
-        {/* Row 2 */}
-
-        <div className="dashboard-grid">
-
-          <div className="dashboard-card">
-
-            <h2>Quick Actions</h2>
-
-            <div className="quick-actions">
-
-              <button className="action-btn">
-                Add Student
-              </button>
-
-              <button className="action-btn">
-                Upload Resource
-              </button>
-
-              <button className="action-btn">
-                Create Assignment
-              </button>
-
+          <div className="dashboard-sidebar-stack">
+            <div className="dashboard-card">
+              <h2>Upcoming Deadlines</h2>
+              {deadlines.length > 0 ? (
+                deadlines.map((deadline) => (
+                  <div className="deadline-item" key={deadline.id}>
+                    <span>{deadline.title}</span>
+                    <strong>{deadline.date}</strong>
+                  </div>
+                ))
+              ) : (
+                <p className="empty-state-text">No upcoming deadlines.</p>
+              )}
             </div>
 
-          </div>
-
-          <div className="dashboard-card">
-
-            <h2>Study Insights</h2>
-
-            <ul className="insight-list">
-              <li>18 assignments are currently pending.</li>
-              <li>Database is the most active subject this week.</li>
-              <li>75% of assignments have been completed.</li>
-              <li>42 study resources are available.</li>
-            </ul>
-
+            <div className="dashboard-card">
+              <h2>Study Insights</h2>
+              <ul className="insight-list">
+                {getInsights().map((insight, idx) => (
+                  <li key={idx}>{insight}</li>
+                ))}
+              </ul>
+            </div>
           </div>
 
         </div>
 
       </main>
-
     </div>
   );
 }

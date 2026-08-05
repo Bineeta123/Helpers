@@ -30,27 +30,25 @@ export default function Sidebar(): React.ReactElement {
 
   return (
     <aside className="sidebar" aria-label="Application sidebar">
-      <div>
-        <div className="sidebar-brand">
-          <h2>Study Planner</h2>
-          <p>Student Portal</p>
-        </div>
-
-        <nav className="sidebar-menu" aria-label="Primary navigation">
-          {MAIN_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                isActive ? 'sidebar-menu-item active' : 'sidebar-menu-item'
-              }
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
+      <div className="sidebar-brand">
+        <h2>Study Planner</h2>
+        <p>Student Portal</p>
       </div>
+
+      <nav className="sidebar-menu" aria-label="Primary navigation">
+        {MAIN_ITEMS.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              isActive ? 'sidebar-menu-item active' : 'sidebar-menu-item'
+            }
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
       <div className="sidebar-footer">      
         <button type="button" className="logout-button" onClick={handleLogout}>
