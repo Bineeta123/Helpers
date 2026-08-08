@@ -121,77 +121,104 @@ export default function SubjectDetails() {
   };
 
   // -------------------------------------------------------------
-  // CALCULATE PRIORITY SCHEDULING ALGORITHM VARIABLES FOR THIS SUBJECT
+  // CALCULATE PRIORITY USING FULL DASHBOARD LOGIC
   // -------------------------------------------------------------
   const getPriorityInfo = () => {
-    let pDeadline = 0;
-    let pExam = 0;
-    let pBacklog = 0;
-    let daysToDeadline = Infinity;
-    let daysToExam = Infinity;
-
+    const now = new Date();
     const pendingAssignments = subjectAssignments.filter((a) => !a.submission);
-    
-    // 1. Assignment Urgency
-    if (pendingAssignments.length > 0) {
-      const now = new Date();
+
+    // ----- Assignment statistics -----
+    const totalAssign = subjectAssignments.length;
+    const completedAssign = subjectAssignments.filter((a) => a.submission).length;
+    const pendingCount = pendingAssignments.length;
+
+    // ----- Deadline weighting (pDeadline) -----
+    let daysToDeadline = Infinity;
+    let pDeadline = 0;
+    if (pendingCount > 0) {
       pendingAssignments.forEach((a) => {
-        const diffTime = new Date(a.assignment.dueDate).getTime() - now.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays < daysToDeadline) {
-          daysToDeadline = diffDays;
-        }
+        const diffDays = Math.ceil(
+          (new Date(a.assignment.dueDate).getTime() - now.getTime()) /
+            (1000 * 60 * 60 * 24)
+        );
+        if (diffDays < daysToDeadline) daysToDeadline = diffDays;
       });
 
-      if (daysToDeadline <= 0) {
-        pDeadline = 10;
-      } else if (daysToDeadline <= 7) {
-        pDeadline = 10 - daysToDeadline;
-      } else if (daysToDeadline <= 14) {
-        pDeadline = 3;
-      } else {
-        pDeadline = 1;
-      }
+      if (daysToDeadline <= 0) pDeadline = 10;
+      else if (daysToDeadline <= 7) pDeadline = 10 - daysToDeadline;
+      else if (daysToDeadline <= 14) pDeadline = 3;
+      else pDeadline = 1;
     }
 
-    // 2. Exam Urgency
+    // ----- Exam weighting (pExam) -----
+    let daysToExam = Infinity;
+    let pExam = 0;
     if (examDate) {
-      const now = new Date();
-      const diffTime = new Date(examDate).getTime() - now.getTime();
-      daysToExam = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      if (daysToExam <= 0) {
-        pExam = 15;
-      } else if (daysToExam <= 5) {
-        pExam = 15 - daysToExam * 2;
-      } else if (daysToExam <= 15) {
-        pExam = 8 - daysToExam * 0.4;
-      } else if (daysToExam <= 30) {
-        pExam = 2;
-      } else {
-        pExam = 1;
-      }
+      const diffDays = Math.ceil(
+        (new Date(examDate).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      daysToExam = diffDays;
+      if (daysToExam <= 0) pExam = 15;
+      else if (daysToExam <= 5) pExam = 15 - daysToExam * 2;
+      else if (daysToExam <= 15) pExam = 8 - daysToExam * 0.4;
+      else if (daysToExam <= 30) pExam = 2;
+      else pExam = 1;
     }
 
-    // 3. Backlog Urgency
-    pBacklog = Math.min(5, pendingAssignments.length * 1.5);
+    // ----- Overdue factor -----
+    const overdueAssign = subjectAssignments.filter(
+      (a) =>
+        !a.submission && new Date(a.assignment.dueDate).getTime() < now.getTime()
+    ).length;
+    const overdueFactor = overdueAssign * 3.5;
 
-    const totalRaw = pDeadline + pExam + pBacklog;
+    // ----- Completion rate factor -----
+    const completionRateFactor =
+      totalAssign > 0 ? (1 - completedAssign / totalAssign) * 4.0 : 0;
+
+    // ----- Grade factor -----
+    const gradedSubs = subjectAssignments.filter(
+      (a) => a.submission && a.submission.status === "Graded" && a.submission.grade !== null
+    );
+    const avgGrade =
+      gradedSubs.length > 0
+        ? gradedSubs.reduce((sum: number, a: any) => sum + a.submission.grade, 0) /
+          gradedSubs.length
+        : null;
+    const gradeFactor = avgGrade !== null ? (5.0 - avgGrade) * 1.5 : 0;
+
+    // ----- Deadline factor (weighted) -----
+    const deadlineFactor = pDeadline * 0.8;
+
+    // ----- Exam factor (weighted) -----
+    const examFactor = pExam * 0.8;
+
+    const pBacklog = Math.min(5, pendingCount * 1.5);
+    const totalRaw =
+      pendingCount * 2.0 +
+      overdueFactor +
+      completionRateFactor +
+      gradeFactor +
+      deadlineFactor +
+      examFactor;
     const finalScore = Math.min(10, Math.max(0.5, parseFloat(totalRaw.toFixed(1))));
-    
+
+    // ----- Priority level -----
     let level: "High" | "Medium" | "Low" = "Low";
-    if (finalScore >= 7.5) level = "High";
+    if (finalScore >= 7.0) level = "High";
     else if (finalScore >= 4.0) level = "Medium";
 
     return {
       finalScore,
+      pBacklog,
       level,
       pDeadline,
       pExam,
-      pBacklog,
       daysToDeadline,
       daysToExam,
-      pendingCount: pendingAssignments.length
+      pendingCount,
+      overdueAssign,
+      avgGrade,
     };
   };
 
