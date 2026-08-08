@@ -51,8 +51,9 @@ export default function SysadminSignup() {
     }
 
     const lowerEmail = email.toLowerCase().trim();
-    if (!lowerEmail.endsWith('@hod.ncit.edu.np')) {
-      return 'Admin email must end with @hod.ncit.edu.np.'
+    const emailRegex = /^hod\.[a-zA-Z0-9_.-]+@ncit\.edu\.np$/;
+    if (!emailRegex.test(lowerEmail)) {
+      return 'Admin email must be in the pattern hod.department@ncit.edu.np (e.g. hod.software@ncit.edu.np).'
     }
 
     return ''
@@ -110,11 +111,11 @@ export default function SysadminSignup() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@hod.ncit.edu.np"
+              placeholder="hod.department@ncit.edu.np"
               required
             />
           </label>
-          <p className="auth-hint">Admin email must include: @hod.ncit.edu.np</p>
+          <p className="auth-hint">Admin email must use pattern: hod.department@ncit.edu.np (e.g. hod.software@ncit.edu.np)</p>
 
           <label>
             Password

@@ -99,11 +99,11 @@ export default function SetupPage() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              placeholder="name@hod.ncit.edu.np"
+              placeholder="hod.department@ncit.edu.np"
               required
             />
           </label>
-          <p className="auth-hint">Use the administrator email address that ends with @hod.ncit.edu.np</p>
+          <p className="auth-hint">Use the administrator email address pattern: hod.department@ncit.edu.np (e.g. hod.software@ncit.edu.np)</p>
 
           <label>
             School Name

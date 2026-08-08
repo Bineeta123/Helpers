@@ -64,7 +64,7 @@ namespace SmartStudyPlanner.Controllers
 
             if (!IsValidEmailForRole(request.Email, "Sysadmin"))
             {
-                return BadRequest("Admin email must include @hod.ncit.edu.np");
+                return BadRequest("Admin email must be in the pattern hod.department@ncit.edu.np (e.g. hod.software@ncit.edu.np)");
             }
 
             var sysadmins = await _userManager.GetUsersInRoleAsync("Sysadmin");
@@ -144,7 +144,7 @@ namespace SmartStudyPlanner.Controllers
                 }
                 if (request.Role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
                 {
-                    return BadRequest("Admin email must include @hod.ncit.edu.np");
+                    return BadRequest("Admin email must be in the pattern hod.department@ncit.edu.np (e.g. hod.software@ncit.edu.np)");
                 }
 
                 return BadRequest("Teacher email must include name.surname and end with @ncit.edu.np");
@@ -312,7 +312,7 @@ namespace SmartStudyPlanner.Controllers
 
             if (role.Equals("Sysadmin", StringComparison.OrdinalIgnoreCase))
             {
-                return lowerEmail.EndsWith("@hod.ncit.edu.np");
+                return System.Text.RegularExpressions.Regex.IsMatch(lowerEmail, @"^hod\.[a-z0-9_.-]+@ncit\.edu\.np$");
             }
 
             if (role.Equals("Student", StringComparison.OrdinalIgnoreCase))
