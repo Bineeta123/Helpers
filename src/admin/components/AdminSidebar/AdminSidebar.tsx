@@ -30,7 +30,7 @@ export default function AdminSidebar() {
   return (
     <aside className="admin-sidebar">
       <div className="admin-logo">
-        <h2>Study Planner</h2>
+        <h2>Smart Study Planner</h2>
         <p>Teacher Portal</p>
       </div>
 

@@ -34,7 +34,7 @@ export default function SysadminSidebar() {
   return (
     <aside className="sysadmin-sidebar">
       <div className="sysadmin-logo">
-        <h2>Study Planner</h2>
+        <h2>Smart Study Planner</h2>
         <p>Admin Control Panel</p>
       </div>
 

@@ -206,7 +206,8 @@ export default function Dashboard() {
   const displayName = (() => {
     const rawName = user?.name || user?.email || "student";
     const localPart = rawName.split("@")[0];
-    return localPart.charAt(0).toUpperCase() + localPart.slice(1);
+    const nameWithoutDots = localPart.split(".")[0];
+    return nameWithoutDots.charAt(0).toUpperCase() + nameWithoutDots.slice(1);
   })();
 
   const getReasonText = (sub: SubjectInfo) => {
@@ -258,7 +259,7 @@ export default function Dashboard() {
       {/* Welcome Banner */}
       <div className="dashboard-welcome">
         <div>
-          <h1>Welcome back, {displayName}!</h1>
+          <h1>Welcome, {displayName} 👋</h1>
           <p className="subtext">
             {classList.length > 0
               ? `Enrolled in ${classList.join(" | ")}`

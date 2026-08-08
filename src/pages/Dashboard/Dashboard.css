@@ -7,27 +7,27 @@
 }
 
 .dashboard-welcome {
-  margin-bottom: var(--spacing-10);
-  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-400) 100%);
-  padding: var(--spacing-8);
-  border-radius: var(--radius-2xl);
-  color: var(--color-text-inverse);
-  box-shadow: var(--shadow-lg);
+  margin-bottom: var(--spacing-8);
+  background: transparent;
+  padding: var(--spacing-3) 0 var(--spacing-6) 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .dashboard-welcome h1 {
-  margin: 0 0 var(--spacing-2) 0;
+  margin: 0;
   font-family: var(--font-family-header);
-  font-size: 2.25rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
 }
 
 .dashboard-welcome .subtext {
-  margin: 0;
-  font-size: 1.1rem;
-  opacity: 0.9;
-  font-weight: 500;
+  margin-top: var(--spacing-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  opacity: 1;
 }
 
 .dashboard-layout-grid {

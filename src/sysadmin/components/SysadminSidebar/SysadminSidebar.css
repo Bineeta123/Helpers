@@ -1,3 +1,5 @@
+/* Sysadmin Sidebar Component */
+
 .sysadmin-sidebar {
   width: 260px;
   background-color: var(--color-background-primary);
@@ -10,28 +12,29 @@
   flex-direction: column;
   z-index: var(--z-sticky);
   box-shadow: var(--shadow-md);
+  box-sizing: border-box;
 }
 
 .sysadmin-logo {
-  padding: var(--spacing-8) var(--spacing-6);
-  border-bottom: 1px solid var(--color-border-light);
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--color-neutral-100);
   flex-shrink: 0;
 }
 
 .sysadmin-logo h2 {
   font-family: var(--font-family-header);
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
   color: var(--color-primary-600);
   margin: 0;
   letter-spacing: -0.5px;
 }
 
 .sysadmin-logo p {
-  color: var(--color-text-secondary);
+  color: var(--color-text-tertiary);
   font-size: var(--font-size-xs);
   margin: var(--spacing-1) 0 0 0;
-  font-weight: 500;
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -40,10 +43,10 @@
   flex: 1;
   overflow-y: auto;
   scrollbar-width: none;
-  padding: var(--spacing-6) var(--spacing-4);
+  padding: var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2);
+  gap: var(--spacing-1);
 }
 
 .sysadmin-menu::-webkit-scrollbar {
@@ -54,13 +57,13 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-4);
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-3);
   color: var(--color-text-secondary);
   text-decoration: none;
   border-radius: var(--radius-lg);
-  font-weight: 500;
+  font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
-  transition: all var(--transition-fast) ease;
+  transition: all var(--transition-fast);
 }
 
 .sysadmin-menu-item:hover {
@@ -71,7 +74,6 @@
 .sysadmin-menu-item.active {
   background-color: var(--color-primary-100);
   color: var(--color-primary-600);
-  font-weight: 600;
 }
 
 .sysadmin-menu-item svg {
@@ -84,7 +86,7 @@
 }
 
 .sysadmin-footer {
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-6) var(--spacing-4);
+  padding: var(--spacing-4);
   margin-top: auto;
   flex-shrink: 0;
 }
@@ -94,15 +96,17 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-3);
+  width: 100%;
   padding: var(--spacing-3);
   background-color: var(--color-error-50);
   color: var(--color-error-700);
   border: none;
   border-radius: var(--radius-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all var(--transition-fast) ease;
-  width: 100%;
+  transition: all var(--transition-fast);
+  box-sizing: border-box;
+  font-size: var(--font-size-sm);
 }
 
 .logout-button:hover {
@@ -113,9 +117,8 @@
 @media (max-width: 768px) {
   .sysadmin-sidebar {
     transform: translateX(-100%);
-    transition: transform var(--transition-base) ease;
+    transition: transform var(--transition-base);
   }
-
   .sysadmin-sidebar.open {
     transform: translateX(0);
   }

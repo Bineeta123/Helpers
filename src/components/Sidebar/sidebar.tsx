@@ -31,7 +31,7 @@ export default function Sidebar(): React.ReactElement {
   return (
     <aside className="sidebar" aria-label="Application sidebar">
       <div className="sidebar-brand">
-        <h2>Study Planner</h2>
+        <h2>Smart Study Planner</h2>
         <p>Student Portal</p>
       </div>
 
