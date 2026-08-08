@@ -1,77 +1,78 @@
-/* c:\NEXTJS\Miniproject\miniproject\src\pages\Analytics\Analytics.css */
+/* Analytics Page Styles - Unified Design System */
 
 .global-analytics-container {
-  padding: 1.5rem;
+  padding: var(--spacing-6);
   max-width: 1200px;
   margin: 0 auto;
-  font-family: 'Outfit', sans-serif;
-  color: #1e293b;
+  font-family: var(--font-family-base);
+  color: var(--color-text-primary);
 }
 
 .analytics-header-section {
-  margin-bottom: 2.5rem;
+  margin-bottom: var(--spacing-10);
 }
 
 .analytics-header-section h1 {
-  font-size: 2.25rem;
-  font-weight: 800;
-  margin: 0 0 0.5rem 0;
-  color: #0f172a;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  margin: 0 0 var(--spacing-2) 0;
+  color: var(--color-text-primary);
 }
 
 .analytics-header-section p {
   margin: 0;
-  color: #64748b;
-  font-size: 1rem;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
 }
 
 /* KPI Cards Layout */
 .analytics-summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-10);
 }
 
 .kpi-card {
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-  padding: 1.5rem;
+  background-color: var(--color-background-primary);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border-light);
+  padding: var(--spacing-6);
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: var(--spacing-5);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
 }
 
 .kpi-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
 .kpi-icon-wrapper {
   width: 52px;
   height: 52px;
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .kpi-icon-wrapper.blue {
-  background: #eef2ff;
-  color: #4f46e5;
+  background-color: var(--color-primary-50);
+  color: var(--color-primary-600);
 }
 
 .kpi-icon-wrapper.green {
-  background: #f0fdf4;
-  color: #16a34a;
+  background-color: var(--color-success-50);
+  color: var(--color-success-600);
 }
 
 .kpi-icon-wrapper.gold {
-  background: #fffbeb;
-  color: #ca8a04;
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-600);
 }
 
 .kpi-details {
@@ -80,33 +81,33 @@
 }
 
 .kpi-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #64748b;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .kpi-value {
-  margin: 0.2rem 0;
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #0f172a;
+  margin: var(--spacing-1) 0;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
   line-height: 1;
 }
 
 .kpi-note {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  font-weight: 500;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
 }
 
 /* Diagrams Grid */
 .analytics-diagrams-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-8);
+  margin-bottom: var(--spacing-8);
 }
 
 @media (min-width: 768px) {
@@ -116,11 +117,11 @@
 }
 
 .diagram-card {
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-  padding: 2rem;
-  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+  background-color: var(--color-background-primary);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-border-light);
+  padding: var(--spacing-8);
+  box-shadow: var(--shadow-md);
 }
 
 .diagram-card.full-width {
@@ -130,17 +131,17 @@
 
 .diagram-card h3 {
   margin-top: 0;
-  margin-bottom: 0.25rem;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #0f172a;
+  margin-bottom: var(--spacing-1);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
 }
 
 .card-subtitle {
   margin-top: 0;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: #64748b;
+  margin-bottom: var(--spacing-6);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 /* Radial diagram styling */
@@ -148,7 +149,7 @@
   position: relative;
   width: 180px;
   height: 180px;
-  margin: 0.5rem auto 1.5rem auto;
+  margin: var(--spacing-2) auto var(--spacing-6) auto;
 }
 
 .radial-svg {
@@ -168,35 +169,35 @@
 }
 
 .radial-text .percent-val {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #4f46e5;
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-primary-600);
   line-height: 1;
 }
 
 .radial-text .percent-sub {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
-  margin-top: 0.25rem;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-1);
   text-transform: uppercase;
 }
 
 .radial-legend {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 1rem;
+  gap: var(--spacing-6);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--spacing-4);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #475569;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
 }
 
 .legend-dot {
@@ -206,11 +207,11 @@
 }
 
 .legend-dot.completed {
-  background: #4f46e5;
+  background: var(--color-primary-600);
 }
 
 .legend-dot.pending {
-  background: #e2e8f0;
+  background: var(--color-border-light);
 }
 
 /* Subject Progress Bars */
@@ -234,26 +235,26 @@
 
 .subject-name {
   font-weight: 700;
-  color: #334155;
+  color: var(--color-text-primary);
 }
 
 .subject-count {
   font-weight: 600;
-  color: #64748b;
+  color: var(--color-text-secondary);
 }
 
 .progress-bar-bg {
   width: 100%;
   height: 12px;
-  background: #e2e8f0;
-  border-radius: 6px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
-  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-primary-600) 0%, var(--color-primary-400) 100%);
+  border-radius: var(--radius-sm);
   transition: width 0.4s ease;
 }
 
@@ -263,25 +264,25 @@
 }
 
 .grade-bar-chart-container {
-  background: #f8fafc;
-  border-radius: 16px;
+  background: var(--color-background-secondary);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--color-border-light);
   margin-top: 1.5rem;
   overflow-x: auto;
 }
 
 .chart-rect {
-  transition: fill 0.2s ease, opacity 0.2s ease;
+  transition: fill var(--transition-fast) ease, opacity var(--transition-fast) ease;
   cursor: pointer;
 }
 
 .chart-rect:hover {
-  fill: #3730a3;
+  fill: var(--color-primary-700);
 }
 
 .empty-chart-text {
-  color: #64748b;
+  color: var(--color-text-secondary);
   font-style: italic;
   text-align: center;
   padding: 3rem 0;
@@ -294,7 +295,7 @@
   min-height: 350px;
   font-size: 1.25rem;
   font-weight: 700;
-  color: #4f46e5;
+  color: var(--color-primary-600);
 }
 
 .analytics-error-pane {
@@ -309,16 +310,16 @@
 
 .analytics-btn-retry {
   padding: 0.75rem 1.5rem;
-  background: #4f46e5;
-  color: #ffffff;
+  background: var(--color-primary-600);
+  color: var(--color-text-inverse);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: background var(--transition-fast) ease;
 }
 
 .analytics-btn-retry:hover {
-  background: #3730a3;
+  background: var(--color-primary-700);
 }

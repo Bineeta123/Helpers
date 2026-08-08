@@ -1,30 +1,30 @@
 .summary-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: var(--color-background-primary);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-base) ease, box-shadow var(--transition-base) ease;
 }
 
 .summary-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--shadow-lg);
 }
 
 .summary-card h3 {
   margin: 0;
-  color: #64748b;
-  font-size: 13px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .summary-card h2 {
-  margin-top: 14px;
+  margin-top: var(--spacing-3);
   margin-bottom: 0;
-  color: #102a43;
+  color: var(--color-text-primary);
   font-size: 34px;
   font-weight: 800;
 }

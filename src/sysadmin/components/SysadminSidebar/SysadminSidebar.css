@@ -1,35 +1,36 @@
 .sysadmin-sidebar {
   width: 260px;
-  background-color: #ffffff;
+  background-color: var(--color-background-primary);
   height: 100vh;
   position: fixed;
   left: 0;
   top: 0;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid var(--color-border-light);
   display: flex;
   flex-direction: column;
-  z-index: 1000;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-md);
 }
 
 .sysadmin-logo {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  padding: var(--spacing-8) var(--spacing-6);
+  border-bottom: 1px solid var(--color-border-light);
   flex-shrink: 0;
 }
 
 .sysadmin-logo h2 {
+  font-family: var(--font-family-header);
   font-size: 1.5rem;
   font-weight: 800;
-  color: #2563eb;
+  color: var(--color-primary-600);
   margin: 0;
   letter-spacing: -0.5px;
 }
 
 .sysadmin-logo p {
-  color: #64748b;
-  font-size: 0.85rem;
-  margin: 0.25rem 0 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  margin: var(--spacing-1) 0 0 0;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -39,10 +40,10 @@
   flex: 1;
   overflow-y: auto;
   scrollbar-width: none;
-  padding: 1.5rem 1rem;
+  padding: var(--spacing-6) var(--spacing-4);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--spacing-2);
 }
 
 .sysadmin-menu::-webkit-scrollbar {
@@ -52,30 +53,30 @@
 .sysadmin-menu-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.875rem 1rem;
-  color: #64748b;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
+  color: var(--color-text-secondary);
   text-decoration: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast) ease;
 }
 
 .sysadmin-menu-item:hover {
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: var(--color-neutral-100);
+  color: var(--color-text-primary);
 }
 
 .sysadmin-menu-item.active {
-  background-color: #eff6ff;
-  color: #2563eb;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
   font-weight: 600;
 }
 
 .sysadmin-menu-item svg {
-  font-size: 1.2rem;
-  transition: transform 0.2s;
+  font-size: var(--font-size-lg);
+  transition: transform var(--transition-fast);
 }
 
 .sysadmin-menu-item:hover svg {
@@ -83,7 +84,7 @@
 }
 
 .sysadmin-footer {
-  padding: 1rem 1rem 1.5rem 1rem;
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-6) var(--spacing-4);
   margin-top: auto;
   flex-shrink: 0;
 }
@@ -92,27 +93,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.875rem;
-  background-color: #fee2e2;
-  color: #dc2626;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background-color: var(--color-error-50);
+  color: var(--color-error-700);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast) ease;
   width: 100%;
 }
 
 .logout-button:hover {
-  background-color: #fca5a5;
-  color: #991b1b;
+  background-color: var(--color-error-100);
+  color: var(--color-error-700);
 }
 
 @media (max-width: 768px) {
   .sysadmin-sidebar {
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform var(--transition-base) ease;
   }
 
   .sysadmin-sidebar.open {

@@ -1,36 +1,36 @@
 .admin-sidebar {
   width: 260px;
   height: 100vh;
-  background: #fbfcfe;
-  border-right: 1px solid #dbe4ef;
+  background-color: var(--color-background-primary);
+  border-right: 1px solid var(--color-border-light);
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: var(--spacing-5);
   position: fixed;
   left: 0;
   top: 0;
   box-sizing: border-box;
-  z-index: 1000;
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-md);
 }
 
 .admin-logo {
   flex-shrink: 0;
+  margin-top: var(--spacing-14);
 }
 
 .admin-logo h2 {
   margin: 0;
-  color: #29443a;
+  font-family: var(--font-family-header);
+  color: var(--color-secondary-600);
   font-size: 24px;
   font-weight: 700;
 }
 
 .admin-logo p {
-  margin-top: 6px;
-  color: #6b7a73;
-  font-size: 14px;
-}
-.admin-logo{
-    margin-top:60px;
+  margin-top: var(--spacing-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
 }
 
 .admin-menu {
@@ -39,8 +39,8 @@
   scrollbar-width: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 40px;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-10);
 }
 
 .admin-menu::-webkit-scrollbar {
@@ -50,23 +50,26 @@
 .admin-menu-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
+  gap: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4);
   text-decoration: none;
-  border-radius: 12px;
-  color: #2f3d37;
-  font-size: 15px;
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: 0.2s;
+  transition: all var(--transition-fast) ease;
 }
 
 .admin-menu-item:hover {
-  background: #e7efea;
+  background: var(--color-secondary-50);
+  color: var(--color-text-primary);
 }
 
-.admin-menu-item.active{
-    background:#475569;
-    color:white;
+.admin-menu-item.active {
+  background: var(--color-secondary-100);
+  color: var(--color-secondary-700);
+  font-weight: 600;
+  text-decoration: none;
 }
 
 .admin-footer {
@@ -80,38 +83,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 11px;
-  padding: 14px;
-  background:#475569;
-  color: white;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background-color: var(--color-error-50);
+  color: var(--color-error-700);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  font-size: 15px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   width: 100%;
   box-sizing: border-box;
+  transition: all var(--transition-fast) ease;
 }
 
 .logout-button:hover {
-  background:#374151;
+  background-color: var(--color-error-100);
+  color: var(--color-error-700);
 }
 
-.admin-menu-item.active {
-    background: #0f766e;
-    color: white;
-    text-decoration: none;
-}
-
-@media (max-width:768px){
-
-  .admin-sidebar{
-    width:220px;
-    height:100vh;
-    
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 220px;
+    height: 100vh;
   }
-  .admin-logo{
-    margin-top:60px;
+  
+  .admin-logo {
+    margin-top: var(--spacing-14);
   }
-
 }

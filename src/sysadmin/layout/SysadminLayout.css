@@ -1,15 +1,15 @@
 .sysadmin-layout {
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(180deg, #f7f8fb 0%, #eef3f7 60%, #f8fafb 100%);
+  background-color: var(--color-background-page);
 }
 
 .sysadmin-main-content {
   flex: 1;
-  padding: 2rem;
+  padding: var(--spacing-8);
   overflow-y: auto;
-  margin-left: 260px; /* Sidebar width */
-  transition: margin-left 0.3s ease;
+  margin-left: 260px;
+  transition: margin-left var(--transition-base);
 }
 
 /* Page Header Styles shared across sysadmin */
@@ -17,46 +17,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-8);
 }
 
 .sysadmin-page-header h1 {
-  font-size: 1.75rem;
-  color: #1e293b;
-  font-weight: 700;
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
   margin: 0;
 }
 
 .sysadmin-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  margin-bottom: 1.5rem;
+  background-color: var(--color-background-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--spacing-6);
+  border: 1px solid var(--color-border-light);
 }
 
 .sysadmin-btn-primary {
-  background: #2563eb;
+  background: var(--color-primary-600);
   color: white;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: var(--spacing-3) var(--spacing-4);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: background-color 0.2s;
+  gap: var(--spacing-2);
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .sysadmin-btn-primary:hover {
-  background: #1d4ed8;
+  background: var(--color-primary-700);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
   .sysadmin-main-content {
     margin-left: 0;
-    padding: 1rem;
+    padding: var(--spacing-4);
     padding-bottom: 5rem; /* For mobile bottom nav */
   }
 }

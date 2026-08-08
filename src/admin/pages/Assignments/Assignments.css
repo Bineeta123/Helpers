@@ -1,136 +1,174 @@
-.assignments-page{
-    padding:30px;
-    background:#f7f8fc;
-    min-height:100vh;
+.assignments-page {
+    padding: var(--spacing-8);
+    background-color: var(--color-background-page);
+    min-height: 100vh;
 }
 
-.assignments-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
+.assignments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-6);
 }
 
-.assignments-header h1{
-    margin:0;
-    color:#1f2937;
+.assignments-header h1 {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
 }
 
-.assignments-header p{
-    margin-top:5px;
-    color:#6b7280;
+.assignments-header p {
+    margin-top: var(--spacing-1);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
 }
 
-.add-btn{
-    padding:10px 18px;
-    background:#0f766e;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+.add-btn {
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--color-primary-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-md);
 }
 
-.search-box{
-    margin-bottom:20px;
+.add-btn:hover {
+    background: var(--color-primary-700);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
 }
 
-.search-box input{
-    width:320px;
-    padding:10px;
-    border:1px solid #d1d5db;
-    border-radius:8px;
+.search-box {
+    margin-bottom: var(--spacing-5);
 }
 
-.assignments-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    border-radius:12px;
-    overflow:hidden;
+.search-box input {
+    width: 320px;
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    font-family: var(--font-family-base);
 }
 
-.assignments-table th{
-    background:#0f766e;
-    color:white;
-    padding:15px;
-    text-align:left;
+.assignments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--color-background-primary);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
-.assignments-table td{
-    padding:15px;
-    border-bottom:1px solid #eee;
+.assignments-table th {
+    background-color: var(--color-primary-600);
+    color: white;
+    padding: var(--spacing-4);
+    text-align: left;
+    font-weight: var(--font-weight-semibold);
 }
 
-.assignments-table tr:hover{
-    background:#f9fafb;
+.assignments-table td {
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: var(--font-size-sm);
 }
 
-.status{
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:600;
+.assignments-table tr:hover {
+    background-color: var(--color-neutral-50);
 }
 
-.pending{
-    background:#fef3c7;
-    color:#92400e;
+.status {
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
 }
 
-.completed{
-    background:#dcfce7;
-    color:#166534;
+.pending {
+    background-color: var(--color-warning-50);
+    color: var(--color-warning-700);
 }
 
-.view-btn{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:6px;
-    margin-right:8px;
-    cursor:pointer;
+.completed {
+    background-color: var(--color-success-50);
+    color: var(--color-success-700);
 }
 
-.edit-btn{
-    background:#2563eb;
-    color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:6px;
-    margin-right:8px;
-    cursor:pointer;
+.view-btn {
+    background: var(--color-primary-600);
+    color: white;
+    border: none;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-lg);
+    margin-right: var(--spacing-2);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
 }
 
-.delete-btn{
-    background:#dc2626;
-    color:white;
-    border:none;
-    padding:8px 12px;
-    border-radius:6px;
-    cursor:pointer;
+.view-btn:hover {
+    background: var(--color-primary-700);
+}
+
+.edit-btn {
+    background: var(--color-primary-600);
+    color: white;
+    border: none;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-lg);
+    margin-right: var(--spacing-2);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
+}
+
+.edit-btn:hover {
+    background: var(--color-primary-700);
+}
+
+.delete-btn {
+    background: var(--color-error-600);
+    color: white;
+    border: none;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
+}
+
+.delete-btn:hover {
+    background: var(--color-error-700);
 }
 
 .assignment-form {
-    background: white;
-    padding: 22px;
-    border-radius: 12px;
-    margin-bottom: 24px;
+    background-color: var(--color-background-primary);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+    margin-bottom: var(--spacing-6);
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    gap: var(--spacing-3);
+    box-shadow: var(--shadow-md);
 }
 
 .assignment-form input,
 .assignment-form textarea {
     width: 100%;
-    padding: 11px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
     outline: none;
     box-sizing: border-box;
+    font-family: var(--font-family-base);
 }
 
 .assignment-form textarea {
@@ -140,14 +178,13 @@
 
 .assignment-form input:focus,
 .assignment-form textarea:focus {
-    border-color: #0f766e;
-    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+    border-color: var(--color-primary-600);
+    box-shadow: 0 0 0 3px var(--color-primary-50);
 }
 
 .assignment-form div {
     display: flex;
-    gap: 10px;
-    align-items: center;
+    gap: var(--spacing-2);
 }
 
 .assignment-details {

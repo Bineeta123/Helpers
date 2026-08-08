@@ -16,7 +16,7 @@ export default function LandingPage() {
                 <p className="overline">Smart Study Planner</p>
               </div>
 
-              <h1>Organize classes, approvals, and school life in one beautiful place.</h1>
+              <h1>Organize classes, approvals, and college life in one beautiful place.</h1>
               <p className="description">
                 Set up your first administrator account, configure school details, and empower teachers and students with a calm, modern dashboard experience.
               </p>

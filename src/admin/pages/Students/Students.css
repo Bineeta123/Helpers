@@ -1,6 +1,6 @@
 .students-page {
-    padding: 30px;
-    background: #f7f8fc;
+    padding: var(--spacing-8);
+    background-color: var(--color-background-page);
     min-height: 100vh;
 }
 
@@ -8,95 +8,126 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: var(--spacing-6);
 }
 
 .students-header h1 {
     margin: 0;
-    color: #1f2937;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
 }
 
 .students-header p {
-    margin-top: 5px;
-    color: #6b7280;
+    margin-top: var(--spacing-1);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
 }
 
 .add-btn {
-    padding: 10px 18px;
-    background: #0f766e;
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--color-primary-600);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     cursor: pointer;
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-md);
+}
+
+.add-btn:hover {
+    background: var(--color-primary-700);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
 }
 
 .search-box {
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-5);
 }
 
 .search-box input {
     width: 320px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    font-family: var(--font-family-base);
 }
 
 .students-table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
+    background-color: var(--color-background-primary);
+    border-radius: var(--radius-xl);
     overflow: hidden;
+    box-shadow: var(--shadow-md);
 }
 
 .students-table th {
-    background: #0f766e;
-    color: white;
-    padding: 15px;
+    background-color: var(--color-neutral-100);
+    color: var(--color-text-primary);
+    padding: var(--spacing-4);
     text-align: left;
+    font-weight: var(--font-weight-semibold);
+    border-bottom: 2px solid var(--color-border-light);
 }
 
 .students-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eeeeee;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: var(--font-size-sm);
 }
 
 .students-table tr:hover {
-    background: #f9fafb;
+    background-color: var(--color-neutral-50);
 }
 
 .status {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
 }
 
 .active {
-    background: #dcfce7;
-    color: #15803d;
+    background-color: var(--color-success-50);
+    color: var(--color-success-700);
 }
 
 .inactive {
-    background: #fee2e2;
-    color: #dc2626;
+    background-color: var(--color-error-50);
+    color: var(--color-error-700);
 }
 
 .view-btn {
-    background: #2563eb;
+    background: var(--color-primary-600);
     color: white;
     border: none;
-    padding: 8px 12px;
-    margin-right: 8px;
-    border-radius: 6px;
+    padding: var(--spacing-2) var(--spacing-3);
+    margin-right: var(--spacing-2);
+    border-radius: var(--radius-lg);
     cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
+}
+
+.view-btn:hover {
+    background: var(--color-primary-700);
 }
 
 .delete-btn {
-    background: #dc2626;
+    background: var(--color-error-600);
     color: white;
     border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--radius-lg);
     cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-fast);
+}
+
+.delete-btn:hover {
+    background: var(--color-error-700);
 }
