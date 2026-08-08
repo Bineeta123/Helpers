@@ -847,15 +847,15 @@ body {
   min-height: 48px;
   border: none;
   border-radius: var(--radius-lg);
-  background: var(--color-primary-600);
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-secondary-600) 100%);
   color: var(--color-text-inverse);
   font-weight: 800;
   cursor: pointer;
-  transition: background-color var(--transition-fast) ease, transform var(--transition-fast) ease;
+  transition: all var(--transition-fast) ease;
 }
 
 .auth-button:hover:not(:disabled) {
-  background: var(--color-primary-700);
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-secondary-700) 100%);
   transform: translateY(-1px);
 }
 

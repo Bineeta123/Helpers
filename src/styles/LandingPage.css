@@ -89,14 +89,15 @@
   padding: var(--spacing-4) var(--spacing-6);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-md);
   font-size: var(--font-size-base);
 }
 
 .landing-action-button:hover {
+  background: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-secondary-700) 100%);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
 }
 
 .landing-action-button:active {
