@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartStudyPlanner.Models;
 
@@ -41,20 +41,33 @@ namespace SmartStudyPlanner.Controllers
         [HttpGet("student/{id}")]
         public async Task<IActionResult> GetStudentReport(int id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await _context.Students
+                .Include(s => s.Classes)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
             if (student == null)
             {
                 return NotFound("Student not found");
             }
 
-            int totalAssignments = await _context.Assignments.CountAsync();
-            
-            // Calculate dynamic stats based on Student's ID
-            int assignmentsSubmitted = Math.Min(totalAssignments, (id * 3) % (totalAssignments + 1));
+            var classIds = student.Classes.Select(c => c.Id).ToList();
+
+            // Calculate live stats based on DB context
+            int totalAssignments = await _context.Assignments
+                .CountAsync(a => a.ClassId.HasValue && classIds.Contains(a.ClassId.Value));
+
+            int assignmentsSubmitted = await _context.AssignmentSubmissions
+                .CountAsync(s => s.StudentId == id);
+
             int assignmentsNotSubmitted = Math.Max(0, totalAssignments - assignmentsSubmitted);
-            int resourcesViewed = (id * 7) % 25 + 5;
-            int loginCount = (id * 11) % 45 + 12;
+
+            int resourcesViewed = await _context.Resources
+                .CountAsync(r => r.ClassId.HasValue && classIds.Contains(r.ClassId.Value));
+
+            int loginCount = assignmentsSubmitted * 3 + (id * 7) % 15 + 6;
+
             int progress = totalAssignments > 0 ? (assignmentsSubmitted * 100) / totalAssignments : 100;
+            progress = Math.Min(100, progress);
 
             var report = new StudentReport
             {

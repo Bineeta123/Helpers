@@ -83,11 +83,6 @@ export default function Reports() {
       title: "Resources Viewed",
       value: report.resourcesViewed,
     },
-    {
-      icon: "🔑",
-      title: "Times Logged In",
-      value: report.loginCount,
-    },
   ];
 
   return (

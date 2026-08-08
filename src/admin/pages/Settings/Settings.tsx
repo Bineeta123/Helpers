@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import "./Settings.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:5065";
 
 export default function Settings() {
-  const [adminName, setAdminName] = useState("Teacher");
+  const { user } = useAuth();
+  const [adminName, setAdminName] = useState("");
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Change this to the email of the currently logged-in admin.
-  // Later, you can get it from your login/auth context.
-  const currentEmail = "Sir@hod.ncit.edu.np";
+  const currentEmail = user?.email;
 
   useEffect(() => {
+    if (!currentEmail) return;
+
     fetch(`${API_BASE}/api/Settings/${encodeURIComponent(currentEmail)}`)
       .then((res) => {
         if (!res.ok) {
@@ -21,12 +24,19 @@ export default function Settings() {
         return res.json();
       })
       .then((data) => {
-        setEmail(data.email);
+        setEmail(data.email || "");
+        setAdminName(data.name || "Teacher");
+        setLoading(false);
       })
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [currentEmail]);
 
   const handleSave = async () => {
+    if (!currentEmail) return;
+
     try {
       const response = await fetch(
         `${API_BASE}/api/Settings/${encodeURIComponent(currentEmail)}`,
@@ -36,6 +46,7 @@ export default function Settings() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            name: adminName,
             email,
             newPassword,
           }),
@@ -57,6 +68,10 @@ export default function Settings() {
       alert("Something went wrong.");
     }
   };
+
+  if (loading) {
+    return <div className="settings-page"><p>Loading settings...</p></div>;
+  }
 
   return (
     <div className="settings-page">
