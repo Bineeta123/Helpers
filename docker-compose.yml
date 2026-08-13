@@ -32,7 +32,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - VITE_API_URL=http://localhost:5065
+        - VITE_API_URL=http://127.0.0.1:5065
     ports:
       - "5173:80"
     depends_on:
